@@ -1,0 +1,1746 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RBXGarden V4 — Roblox Luau Dev SuperHub</title>
+<meta name="description" content="Hub Frutiger para guardar scripts, estudar Luau, pesquisar módulos e usar um copiloto de código Roblox.">
+<style>
+:root{
+  --bg:#dff8ff;
+  --bg2:#effff5;
+  --ink:#123447;
+  --muted:#547181;
+  --panel:rgba(255,255,255,.73);
+  --panel-strong:rgba(255,255,255,.9);
+  --line:rgba(23,109,134,.16);
+  --aqua:#19bfd0;
+  --aqua2:#75e8ec;
+  --blue:#4d93e9;
+  --green:#65c96b;
+  --lime:#b7e86a;
+  --yellow:#ffe66d;
+  --shadow:0 20px 55px rgba(36,105,130,.17);
+  --shadow2:0 8px 20px rgba(32,104,125,.12);
+  --radius:24px;
+  --radius2:16px;
+  --mono:"JetBrains Mono","Cascadia Code","SFMono-Regular",Consolas,monospace;
+  --ui:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--ui);color:var(--ink);background:
+  radial-gradient(circle at 10% 8%,rgba(255,255,255,.95) 0 70px,transparent 72px),
+  radial-gradient(circle at 88% 18%,rgba(255,255,255,.8) 0 110px,transparent 113px),
+  linear-gradient(140deg,var(--bg),var(--bg2) 45%,#e8fff7);
+  min-height:100vh;overflow-x:hidden;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.34;
+  background-image:
+    radial-gradient(circle at 30% 70%,rgba(88,205,226,.18),transparent 24%),
+    radial-gradient(circle at 70% 35%,rgba(103,215,125,.15),transparent 20%),
+    radial-gradient(circle at 45% 15%,rgba(255,255,255,.8),transparent 28%);
+}
+a{color:inherit}
+button,input,textarea,select{font:inherit}
+button{border:0;cursor:pointer}
+.app{display:grid;grid-template-columns:272px 1fr;min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;padding:18px;
+  background:linear-gradient(180deg,rgba(248,255,255,.78),rgba(228,255,239,.64));
+  border-right:1px solid var(--line);backdrop-filter:blur(18px);
+}
+.brand{display:flex;gap:12px;align-items:center;padding:10px 8px 18px}
+.brand-mark{
+  width:50px;height:50px;border-radius:17px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#8ff8f4,#49c9df 48%,#5fcf74);
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.85),0 9px 16px rgba(51,159,180,.23);
+  font-size:25px;
+}
+.brand strong{font-size:18px;letter-spacing:-.3px}
+.brand span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:#6a8791;font-weight:800;padding:14px 9px 7px}
+.nav{display:grid;gap:6px}
+.nav button{
+  width:100%;text-align:left;background:transparent;padding:11px 13px;border-radius:14px;
+  color:#466370;display:flex;gap:11px;align-items:center;font-weight:700;transition:.18s;
+}
+.nav button:hover{background:rgba(255,255,255,.55);transform:translateX(2px)}
+.nav button.active{
+  color:#124c5d;background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(191,246,246,.7));
+  box-shadow:var(--shadow2),inset 0 1px 0 #fff;
+}
+.nav-icon{width:23px;text-align:center}
+.side-bottom{position:absolute;left:18px;right:18px;bottom:18px}
+.status{
+  padding:12px 14px;border:1px solid var(--line);border-radius:16px;
+  background:rgba(255,255,255,.58);font-size:12px;color:var(--muted);
+}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#5bd069;box-shadow:0 0 0 4px rgba(91,208,105,.12);margin-right:7px}
+.main{min-width:0;padding:22px 28px 50px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;position:sticky;top:12px;z-index:10;margin-bottom:24px}
+.search-wrap{flex:1;max-width:760px;position:relative}
+.search{
+  width:100%;border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:19px;
+  padding:14px 45px 14px 45px;outline:none;color:var(--ink);box-shadow:var(--shadow2),inset 0 1px 0 #fff;
+  backdrop-filter:blur(14px);
+}
+.search:focus{border-color:rgba(25,191,208,.48);box-shadow:0 0 0 4px rgba(25,191,208,.1),var(--shadow2)}
+.search-icon{position:absolute;left:16px;top:13px;font-size:19px}
+.shortcut{
+  position:absolute;right:11px;top:10px;padding:5px 8px;border-radius:9px;border:1px solid var(--line);
+  background:rgba(255,255,255,.67);font-size:11px;color:#6b8089
+}
+.top-actions{display:flex;gap:8px}
+.icon-btn,.btn{
+  border:1px solid var(--line);background:rgba(255,255,255,.72);color:var(--ink);
+  box-shadow:var(--shadow2),inset 0 1px 0 #fff;border-radius:14px;padding:11px 14px;font-weight:800;
+}
+.icon-btn{width:44px;height:44px;padding:0;display:grid;place-items:center}
+.btn.primary{
+  background:linear-gradient(145deg,#49d9e0,#2bb9d2);color:#073b48;border-color:rgba(0,110,130,.14)
+}
+.btn.green{background:linear-gradient(145deg,#c7f27c,#81d66d);color:#254a26}
+.btn.ghost{background:rgba(255,255,255,.45);box-shadow:none}
+.btn.danger{background:linear-gradient(145deg,#ffe7e7,#ffcdcd);color:#8b3939}
+.btn:hover,.icon-btn:hover{transform:translateY(-1px);filter:saturate(1.05)}
+.view{display:none}.view.active{display:block}
+.hero{
+  display:grid;grid-template-columns:1.35fr .9fr;gap:18px;margin-bottom:18px
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(16px)
+}
+.hero-main{padding:30px;position:relative;overflow:hidden;min-height:265px}
+.hero-main:after{
+  content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-85px;top:-70px;
+  background:radial-gradient(circle at 40% 35%,#ffffff 0 14%,#8fe9ef 15% 38%,#69d378 39% 60%,transparent 61%);
+  opacity:.6;filter:blur(1px)
+}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#41808b;font-weight:900}
+h1{font-size:clamp(33px,5vw,56px);line-height:.96;letter-spacing:-.05em;margin:11px 0}
+.hero-main p{max-width:650px;color:var(--muted);font-size:15px;line-height:1.65;position:relative;z-index:1}
+.hero-actions{display:flex;gap:9px;flex-wrap:wrap;position:relative;z-index:2;margin-top:20px}
+.hero-side{padding:18px;display:flex;flex-direction:column;justify-content:space-between}
+.orb{
+  min-height:160px;border-radius:20px;padding:20px;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 34% 30%,rgba(255,255,255,.98) 0 7px,transparent 8px),
+    radial-gradient(circle at 64% 23%,rgba(255,255,255,.9) 0 11px,transparent 12px),
+    linear-gradient(145deg,#69dbe8,#69d3a7 55%,#c6ef87);
+  box-shadow:inset 0 1px 0 #fff, inset 0 -20px 35px rgba(19,97,107,.08)
+}
+.orb-core{
+  width:98px;height:98px;border-radius:50%;display:grid;place-items:center;font-size:40px;
+  background:radial-gradient(circle at 35% 30%,#ffffff,#d8fff9 37%,#a8e8e4 38% 65%,#79cccb 66%);
+  box-shadow:0 18px 35px rgba(35,129,140,.23),inset 0 3px 7px #fff
+}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mini-stat{padding:12px;border-radius:14px;background:rgba(255,255,255,.48);border:1px solid var(--line)}
+.mini-stat b{display:block;font-size:22px}.mini-stat span{font-size:10px;color:var(--muted)}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:24px 0 11px}
+.section-head h2{margin:0;font-size:20px;letter-spacing:-.03em}
+.section-head p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.grid{display:grid;gap:14px}.grid.cols3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid.cols2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.kpi{
+  padding:18px;border-radius:20px;min-height:125px;position:relative;overflow:hidden
+}
+.kpi .label{font-size:12px;color:var(--muted);font-weight:800}
+.kpi strong{display:block;font-size:33px;margin-top:8px;letter-spacing:-.05em}
+.kpi small{color:#5c7b84}.kpi .bubble{position:absolute;width:85px;height:85px;border-radius:50%;right:-18px;top:-18px;background:rgba(255,255,255,.44)}
+.script-card{padding:17px;display:flex;flex-direction:column;min-height:190px;transition:.18s}
+.script-card:hover,.module-card:hover,.doc-card:hover{transform:translateY(-2px)}
+.card-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{
+  font-size:10px;font-weight:900;padding:5px 8px;border-radius:999px;border:1px solid var(--line);
+  background:rgba(255,255,255,.55);color:#4b6975
+}
+.badge.green{background:rgba(174,236,120,.35);color:#35623b}
+.badge.blue{background:rgba(112,211,239,.3);color:#256276}
+.card-title{font-weight:900;font-size:16px;margin:12px 0 5px}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.55;flex:1}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:15px}
+.muted{color:var(--muted);font-size:11px}
+.empty{padding:32px;text-align:center;color:var(--muted)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.filter{padding:8px 11px;border-radius:12px;background:rgba(255,255,255,.52);border:1px solid var(--line);color:#52707a;font-weight:800;font-size:11px}
+.filter.active{background:rgba(102,220,216,.35);color:#165363}
+.editor-shell{display:grid;grid-template-columns:minmax(0,1fr) 315px;gap:14px}
+.editor-card{padding:14px}
+.editor-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.editor-meta{display:flex;gap:8px;align-items:center;min-width:0}
+.file-dot{width:10px;height:10px;border-radius:50%;background:#63d170}
+.editor-input,.title-input,.tag-input,.select{
+  border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:12px;padding:9px 11px;outline:none;color:var(--ink)
+}
+.title-input{font-weight:900;min-width:180px}
+.code-wrap{
+  height:610px;border:1px solid rgba(29,93,109,.17);border-radius:16px;overflow:hidden;
+  display:grid;grid-template-columns:50px 1fr;background:#103d49;box-shadow:inset 0 1px 0 rgba(255,255,255,.09)
+}
+.lines{
+  padding:15px 8px;text-align:right;color:#6d9aa7;font:12px/1.65 var(--mono);
+  user-select:none;background:rgba(0,0,0,.1)
+}
+.code{
+  width:100%;height:100%;resize:none;border:0;outline:0;background:transparent;color:#e5fbff;
+  font:12px/1.65 var(--mono);padding:15px 14px;tab-size:4;white-space:pre;overflow:auto;
+}
+.editor-side{padding:14px}
+.panel-title{font-weight:900;margin-bottom:9px}.side-block{margin-bottom:18px}
+.side-block label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#6d8590;font-weight:900;margin:0 0 7px}
+.tag-editor{display:flex;gap:6px;flex-wrap:wrap}
+.tag-editor .badge{cursor:pointer}
+.editor-note{font-size:11px;color:var(--muted);line-height:1.6}
+.ai-layout{display:grid;grid-template-columns:minmax(0,1.3fr) 340px;gap:14px}
+.ai-chat{padding:16px;min-height:620px;display:flex;flex-direction:column}
+.messages{flex:1;overflow:auto;padding:5px}
+.msg{display:flex;gap:9px;margin:12px 0}.msg.me{justify-content:flex-end}.bubble-msg{
+  max-width:82%;padding:11px 13px;border-radius:16px;background:rgba(255,255,255,.64);border:1px solid var(--line);font-size:12px;line-height:1.6
+}
+.msg.me .bubble-msg{background:linear-gradient(145deg,rgba(102,224,226,.42),rgba(174,242,157,.34))}
+.ai-avatar{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,#7ee7ee,#7ad47a)}
+.ai-compose{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+.ai-input{min-height:75px;resize:none;border:1px solid var(--line);border-radius:15px;padding:11px;background:rgba(255,255,255,.78);outline:none}
+.ai-sidebar{padding:16px}.prompt-list{display:grid;gap:7px}
+.prompt{padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.5);text-align:left;font-size:11px;font-weight:800;color:#496976}
+.doc-layout{display:grid;grid-template-columns:230px 1fr;gap:14px}
+.doc-nav{padding:12px;align-self:start;position:sticky;top:92px;max-height:calc(100vh - 110px);overflow:auto}
+.doc-link{display:block;width:100%;text-align:left;padding:9px 10px;border-radius:11px;background:transparent;color:#587680;font-weight:750;font-size:11px;margin:2px 0}
+.doc-link:hover{background:rgba(255,255,255,.58)}.doc-link.active{background:rgba(96,218,211,.28);color:#184f60}
+.doc-content{padding:28px;min-height:650px}.doc-content h2{font-size:31px;letter-spacing:-.04em;margin:0 0 9px}
+.doc-content h3{font-size:18px;margin-top:28px}.doc-content p,.doc-content li{color:#4e6d78;line-height:1.72;font-size:13px}
+pre{
+  margin:12px 0;padding:15px;border-radius:14px;background:#123c49;color:#e8fbff;overflow:auto;
+  font:12px/1.65 var(--mono);border:1px solid rgba(255,255,255,.09)
+}
+.callout{padding:14px 15px;border-radius:15px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(204,249,251,.58),rgba(223,255,210,.58));margin:14px 0;font-size:12px;color:#476671}
+.module-toolbar{display:grid;grid-template-columns:1fr 180px;gap:8px}
+.module-card{padding:18px;min-height:245px;display:flex;flex-direction:column;transition:.18s}
+.module-card .module-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,#d6fff6,#8fe6f0);font-size:20px}
+.module-card .card-foot{margin-top:auto}
+.module-code{display:none}
+.data-table{width:100%;border-collapse:collapse;font-size:12px}.data-table th,.data-table td{padding:10px;border-bottom:1px solid var(--line);text-align:left}.data-table th{color:#58727d;font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+.modal-backdrop{position:fixed;inset:0;background:rgba(14,57,67,.22);backdrop-filter:blur(7px);display:none;place-items:center;z-index:50;padding:18px}
+.modal-backdrop.show{display:grid}.modal{width:min(720px,100%);padding:20px;max-height:85vh;overflow:auto}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-grid .full{grid-column:1/-1}
+.form-grid label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:900;color:#69818a;margin-bottom:6px}
+.form-grid input,.form-grid textarea,.form-grid select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.78);border-radius:12px;padding:10px;outline:0}
+.form-grid textarea{min-height:180px;resize:vertical}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.cmd{display:none;position:fixed;inset:0;z-index:60;background:rgba(10,47,57,.22);backdrop-filter:blur(8px);padding:10vh 20px}
+.cmd.show{display:block}.cmd-box{max-width:700px;margin:auto;overflow:hidden}
+.cmd-input{width:100%;border:0;padding:16px;background:rgba(255,255,255,.95);outline:0;font-size:16px}
+.cmd-results{max-height:340px;overflow:auto;background:rgba(249,255,255,.96)}
+.cmd-item{padding:12px 15px;border-top:1px solid #dcecf0;cursor:pointer}.cmd-item:hover{background:#effffd}
+.toast{
+  position:fixed;right:18px;bottom:18px;z-index:100;max-width:360px;padding:12px 14px;border-radius:14px;
+  background:rgba(21,61,70,.92);color:#fff;box-shadow:var(--shadow);transform:translateY(12px);opacity:0;pointer-events:none;transition:.2s;font-size:12px
+}
+.toast.show{transform:none;opacity:1}
+footer{margin-top:28px;text-align:center;color:#6f8790;font-size:11px}
+@media (max-width:1050px){
+ .app{grid-template-columns:84px 1fr}.sidebar{padding:12px}.brand{justify-content:center}.brand-text,.nav-title,.nav button span,.status-text{display:none}
+ .brand{padding:10px 0 18px}.nav button{justify-content:center}.side-bottom{left:12px;right:12px}.status{padding:10px 5px;text-align:center}
+ .hero,.editor-shell,.ai-layout,.doc-layout{grid-template-columns:1fr}.doc-nav{position:relative;top:auto;max-height:none;display:flex;gap:6px;overflow:auto}.doc-link{white-space:nowrap}
+}
+@media (max-width:760px){
+ .main{padding:14px}.topbar{position:relative;top:auto}.top-actions .icon-btn:nth-child(2){display:none}
+ .grid.cols3,.grid.cols2{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-main{min-height:auto}.module-toolbar{grid-template-columns:1fr}
+ .form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}
+ .app{grid-template-columns:1fr}.sidebar{position:fixed;bottom:0;left:0;right:0;top:auto;height:auto;z-index:30;padding:8px;border-right:0;border-top:1px solid var(--line)}
+ .brand,.nav-title,.side-bottom{display:none}.nav{display:flex;justify-content:space-around}.nav button{width:auto;padding:9px 12px}.nav button span{display:none}.nav-icon{font-size:18px}
+ .main{padding-bottom:82px}.code-wrap{height:520px}
+}
+
+/* ===== RBXGARDEN V4: ATMOSPHERIC / MOTION LAYER ===== */
+html.motion-off *, html.motion-off *:before, html.motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+body{perspective:1200px}
+body:after{
+  content:"";position:fixed;inset:auto -10% -80px -10%;height:180px;pointer-events:none;z-index:-1;
+  background:linear-gradient(180deg,transparent,rgba(90,205,213,.18));
+  filter:blur(28px);border-radius:50% 50% 0 0;animation:waterDrift 13s ease-in-out infinite alternate
+}
+.scene-decor{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:-1}
+.bubble-float,.leaf-float,.cloud-float{
+  position:absolute;display:block;opacity:.45;filter:blur(.2px);will-change:transform
+}
+.bubble-float{
+  width:var(--s);height:var(--s);left:var(--x);bottom:-90px;border-radius:50%;
+  background:radial-gradient(circle at 35% 28%,rgba(255,255,255,.95),rgba(255,255,255,.22) 34%,rgba(65,194,212,.18) 65%,transparent 72%);
+  border:1px solid rgba(255,255,255,.8);animation:bubbleRise var(--d) linear infinite var(--delay)
+}
+.leaf-float{left:var(--x);top:var(--y);font-size:var(--fs);animation:leafSway var(--d) ease-in-out infinite var(--delay)}
+.cloud-float{
+  width:var(--w);height:52px;left:var(--x);top:var(--y);border-radius:999px;
+  background:rgba(255,255,255,.55);box-shadow:40px -10px 0 8px rgba(255,255,255,.45),95px 4px 0 14px rgba(255,255,255,.38);
+  filter:blur(3px);animation:cloudDrift var(--d) ease-in-out infinite alternate var(--delay)
+}
+@keyframes bubbleRise{0%{transform:translate3d(0,0,0) scale(.65);opacity:0}12%{opacity:.45}50%{transform:translate3d(18px,-45vh,0) scale(1)}100%{transform:translate3d(-22px,-115vh,0) scale(1.2);opacity:0}}
+@keyframes leafSway{0%,100%{transform:rotate(-10deg) translate3d(0,0,0)}50%{transform:rotate(13deg) translate3d(25px,10px,0)}}
+@keyframes cloudDrift{0%{transform:translateX(-5vw)}100%{transform:translateX(8vw)}}
+@keyframes waterDrift{0%{transform:translateX(-2%) scaleX(1)}100%{transform:translateX(2%) scaleX(1.08)}}
+@keyframes floatIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes softPop{0%{transform:scale(.96);opacity:.3}100%{transform:scale(1);opacity:1}}
+@keyframes shimmer{0%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.fade-in{animation:floatIn .45s cubic-bezier(.2,.8,.2,1) both}
+.stagger > *{animation:floatIn .45s cubic-bezier(.2,.8,.2,1) both}
+.stagger > *:nth-child(2){animation-delay:.04s}.stagger > *:nth-child(3){animation-delay:.08s}
+.stagger > *:nth-child(4){animation-delay:.12s}.stagger > *:nth-child(5){animation-delay:.16s}
+.stagger > *:nth-child(6){animation-delay:.20s}.stagger > *:nth-child(7){animation-delay:.24s}
+.hero-main,.card{transform-style:preserve-3d}
+.card::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);
+  transition:opacity .25s;overflow:hidden
+}
+.card:hover::before{opacity:.55;animation:shimmer .9s ease both}
+.progress-line{height:8px;border-radius:999px;background:rgba(255,255,255,.55);overflow:hidden;border:1px solid var(--line)}
+.progress-line > i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#56d6df,#78dc79,#b5e969);box-shadow:0 0 15px rgba(82,208,215,.38);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip-btn{
+  padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.54);font-size:10px;font-weight:900;color:#4b6975;
+}
+.chip-btn.active{background:linear-gradient(145deg,#c6fbf1,#a6e7f2);color:#155263}
+.workspace-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.workspace-card{padding:16px;min-height:180px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.workspace-card .project-orb{
+  width:54px;height:54px;border-radius:18px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#e8fff9,#a7edf0 55%,#a9e97c);box-shadow:inset 0 2px 4px #fff,0 12px 22px rgba(39,145,157,.16)
+}
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kanban-col{padding:14px;min-height:350px}.kanban-col h4{margin:0 0 9px}.task{padding:11px;border-radius:13px;background:rgba(255,255,255,.62);border:1px solid var(--line);margin:7px 0;font-size:11px;box-shadow:0 5px 15px rgba(44,113,127,.06)}
+.snippet-card{padding:14px;position:relative;min-height:210px}.snippet-code{height:104px;overflow:hidden;position:relative}.snippet-code pre{margin:0;max-height:100%;font-size:10px}.snippet-code:after{content:"";position:absolute;left:0;right:0;bottom:0;height:32px;background:linear-gradient(transparent,#123c49)}
+.playground{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+.play-area,.console-area{padding:14px}.play-editor{height:460px;width:100%;resize:vertical;border:1px solid rgba(39,107,122,.2);border-radius:16px;padding:15px;background:#103d49;color:#ebfdff;font:12px/1.65 var(--mono);outline:none}
+.console{height:460px;overflow:auto;background:#0d3641;color:#cbf7dc;border-radius:16px;padding:14px;font:12px/1.65 var(--mono);border:1px solid rgba(255,255,255,.08)}
+.console .line{padding:2px 0}.console .warn{color:#ffe58a}.console .err{color:#ff9e9e}
+.focus-card{padding:22px;display:grid;place-items:center;min-height:540px;position:relative;overflow:hidden}
+.focus-ring{width:250px;height:250px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(#5fdae5 var(--p,0%),rgba(255,255,255,.45) 0);box-shadow:0 25px 60px rgba(48,144,157,.16)}
+.focus-ring:before{content:"";position:absolute;inset:17px;border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.93),rgba(220,255,246,.8));box-shadow:inset 0 2px 8px rgba(76,143,160,.12)}
+.focus-time{position:relative;font-size:48px;font-weight:1000;letter-spacing:-.05em}
+.focus-label{position:relative;color:var(--muted);font-size:11px;font-weight:800}.focus-controls{position:relative;display:flex;gap:8px;margin-top:18px}
+.roadmap{display:grid;gap:12px}.road-step{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:15px}.road-dot{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#dffef4,#a5e9ec);font-weight:1000}.road-step.done .road-dot{background:linear-gradient(145deg,#c8f68b,#74d97c)}.road-step.locked{opacity:.65}
+.kbd{display:inline-block;padding:3px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;background:rgba(255,255,255,.6);font:10px var(--mono);color:#5a717b}
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.stat-tile{padding:11px;border-radius:15px;border:1px solid var(--line);background:rgba(255,255,255,.5)}.stat-tile b{display:block;font-size:19px}.stat-tile small{font-size:9px;color:var(--muted)}
+.toast-progress{height:3px;margin-top:8px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.14)}.toast-progress i{display:block;height:100%;width:100%;background:#98ebc9;transform-origin:left;animation:toastRun 2.3s linear}.toast{overflow:hidden}@keyframes toastRun{to{transform:scaleX(0)}}
+@media(max-width:1200px){.workspace-grid{grid-template-columns:repeat(2,1fr)}.stat-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:850px){.kanban,.playground{grid-template-columns:1fr}.focus-card{min-height:430px}.workspace-grid{grid-template-columns:1fr}.stat-strip{grid-template-columns:repeat(2,1fr)}}
+
+.compact .card{border-radius:18px}.compact .script-card,.compact .module-card{padding:12px;min-height:160px}.compact .main{padding-top:16px}
+</style>
+</head>
+<body>
+
+<div class="scene-decor" aria-hidden="true">
+  <span class="cloud-float" style="--w:130px;--x:5%;--y:8%;--d:18s;--delay:-4s"></span>
+  <span class="cloud-float" style="--w:90px;--x:72%;--y:12%;--d:24s;--delay:-7s"></span>
+  <span class="leaf-float" style="--x:8%;--y:42%;--fs:24px;--d:9s;--delay:-2s">🍃</span>
+  <span class="leaf-float" style="--x:89%;--y:61%;--fs:19px;--d:11s;--delay:-5s">🌿</span>
+  <span class="leaf-float" style="--x:78%;--y:84%;--fs:23px;--d:13s;--delay:-9s">🍃</span>
+  <span class="bubble-float" style="--s:18px;--x:19%;--d:11s;--delay:-3s"></span>
+  <span class="bubble-float" style="--s:10px;--x:62%;--d:8s;--delay:-5s"></span>
+  <span class="bubble-float" style="--s:28px;--x:81%;--d:14s;--delay:-10s"></span>
+  <span class="bubble-float" style="--s:14px;--x:40%;--d:10s;--delay:-8s"></span>
+  <span class="bubble-float" style="--s:8px;--x:54%;--d:16s;--delay:-6s"></span>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">🌱</div>
+    <div class="brand-text"><strong>RBXGarden V4</strong><span>Roblox Luau Dev SuperHub</span></div>
+  </div>
+  <div class="nav-title">Workspace</div>
+  <nav class="nav">
+    <button data-view="dashboard" class="active"><i class="nav-icon">🏡</i><span>Dashboard</span></button>
+    <button data-view="vault"><i class="nav-icon">📚</i><span>Script Vault</span></button>
+    <button data-view="modules"><i class="nav-icon">🧩</i><span>Modules</span></button>
+    <button data-view="projects"><i class="nav-icon">🗂️</i><span>Projects</span></button>
+    <button data-view="snippets"><i class="nav-icon">⚡</i><span>Snippet Lab</span></button>
+    <button data-view="playground"><i class="nav-icon">▶️</i><span>Playground</span></button>
+    <button data-view="ai"><i class="nav-icon">✨</i><span>Code AI</span></button>
+    <button data-view="docs"><i class="nav-icon">📖</i><span>Luau Docs</span></button>
+    <button data-view="focus"><i class="nav-icon">🫧</i><span>Focus</span></button>
+    <button data-view="roadmap"><i class="nav-icon">🗺️</i><span>Roadmap</span></button>
+    <button data-view="settings"><i class="nav-icon">⚙️</i><span>Settings</span></button>
+  </nav>
+  <div class="side-bottom">
+    <div class="status"><span class="dot"></span><span class="status-text">Dados locais ativos · salvamento automático</span></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input id="globalSearch" class="search" placeholder="Pesquisar scripts, módulos, docs e tags...">
+      <span class="shortcut">Ctrl K</span>
+    </div>
+    <div class="top-actions">
+      <button id="cmdBtn" class="icon-btn" title="Command palette">⌘</button>
+      <button id="newScriptBtnTop" class="btn primary">＋ Script</button>
+    </div>
+  </div>
+
+  <section id="dashboard" class="view active">
+    <div class="hero">
+      <div class="card hero-main">
+        <div class="eyebrow">Roblox • Luau • criação</div>
+        <h1>Seu jardim de<br>código Roblox.</h1>
+        <p>Um workspace Frutiger para guardar scripts, encontrar módulos reutilizáveis, estudar Luau e usar um copiloto de código sem perder sua organização.</p>
+        <div class="hero-actions">
+          <button class="btn primary" data-go="vault">Abrir Script Vault</button>
+          <button class="btn green" data-go="modules">Explorar módulos</button>
+          <button class="btn ghost" data-go="docs">Estudar Luau</button>
+        </div>
+      </div>
+      <div class="card hero-side">
+        <div class="orb"><div class="orb-core">💧</div></div>
+        <div class="mini-stats">
+          <div class="mini-stat"><b id="dashScripts">0</b><span>scripts</span></div>
+          <div class="mini-stat"><b id="dashTags">0</b><span>tags</span></div>
+          <div class="mini-stat"><b id="dashModules">10</b><span>módulos</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid cols3">
+      <div class="card kpi"><span class="bubble"></span><div class="label">Scripts salvos</div><strong id="kpiScripts">0</strong><small>persistidos no navegador</small></div>
+      <div class="card kpi"><span class="bubble"></span><div class="label">Módulos prontos</div><strong>10</strong><small>DataStore, remotes, inventário e mais</small></div>
+      <div class="card kpi"><span class="bubble"></span><div class="label">Capítulos Luau</div><strong>15+</strong><small>com exemplos focados em Roblox</small></div>
+    </div>
+
+    <div class="section-head"><div><h2>Continue trabalhando</h2><p>Seus scripts mais recentes aparecem aqui.</p></div><button class="btn ghost" data-go="vault">Ver tudo</button></div>
+    <div id="recentScripts" class="grid cols3"></div>
+
+    <div class="section-head"><div><h2>Atalhos de desenvolvimento</h2><p>Blocos que você pode abrir com um clique.</p></div></div>
+    <div class="section-head"><div><h2>Seu progresso</h2><p>Pequenas metas que deixam seu hub vivo.</p></div></div>
+    <div id="achievementStrip" class="stat-strip"></div>
+
+    <div class="section-head"><div><h2>Atalhos inteligentes</h2><p>Abra ferramentas sem sair do fluxo.</p></div><span class="kbd">Ctrl K</span></div>
+    <div class="grid cols3">
+      <button class="card script-card" data-go="projects"><div class="card-row"><div class="module-icon">🗂️</div><span class="badge green">WORKSPACE</span></div><div class="card-title">Projetos & tarefas</div><div class="card-desc">Organize sistemas por projeto e mantenha uma mini board de desenvolvimento.</div></button>
+      <button class="card script-card" data-go="snippets"><div class="card-row"><div class="module-icon">⚡</div><span class="badge blue">SNIPPETS</span></div><div class="card-title">Snippet Lab</div><div class="card-desc">Peças pequenas de Luau para copiar, adaptar e transformar em módulos.</div></button>
+      <button class="card script-card" data-go="playground"><div class="card-row"><div class="module-icon">▶️</div><span class="badge">LAB</span></div><div class="card-title">Playground</div><div class="card-desc">Teste ideias de sintaxe e veja uma simulação textual de print, warnings e erros.</div></button>
+    </div>
+
+    <div class="grid cols3">
+      <button class="card script-card" data-open-module="DataStoreService Wrapper"><div class="card-row"><div class="module-icon">💾</div><span class="badge green">SAVE</span></div><div class="card-title">DataStore seguro</div><div class="card-desc">Template modular para carregar, salvar, atualizar e proteger dados do jogador.</div></button>
+      <button class="card script-card" data-go="ai"><div class="card-row"><div class="module-icon">✨</div><span class="badge blue">AI</span></div><div class="card-title">Revisar meu código</div><div class="card-desc">Cole um script e peça diagnóstico, melhorias, organização ou explicação.</div></button>
+      <button class="card script-card" data-go="docs"><div class="card-row"><div class="module-icon">📖</div><span class="badge">LUAU</span></div><div class="card-title">Aprender Type System</div><div class="card-desc">Tipos, generics, export type, annotations, strict e exemplos aplicados ao Roblox.</div></button>
+    </div>
+  </section>
+
+  <section id="vault" class="view">
+    <div class="section-head"><div><h2>📚 Script Vault</h2><p>Seu banco pessoal de scripts, snippets e sistemas.</p></div><div class="toolbar"><button id="importBtn" class="btn ghost">Importar</button><button id="exportBtn" class="btn ghost">Exportar</button><button id="newScriptBtn" class="btn primary">＋ Novo script</button></div></div>
+    <div class="filters">
+      <button class="filter active" data-vault-filter="all">Todos</button>
+      <button class="filter" data-vault-filter="favorite">★ Favoritos</button>
+      <button class="filter" data-vault-filter="snippet">Snippets</button>
+      <button class="filter" data-vault-filter="system">Sistemas</button>
+    </div>
+    <div id="vaultGrid" class="grid cols3"></div>
+  </section>
+
+  <section id="editor" class="view">
+    <div class="section-head"><div><h2>🛠 Editor</h2><p>Edite seu Luau e salve automaticamente neste navegador.</p></div><div class="toolbar"><button id="backVault" class="btn ghost">← Vault</button><button id="saveEditor" class="btn green">Salvar</button></div></div>
+    <div class="editor-shell">
+      <div class="card editor-card">
+        <div class="editor-top">
+          <div class="editor-meta"><span class="file-dot"></span><input id="editorTitle" class="title-input" value="NovoScript"></div>
+          <div class="toolbar"><button id="copyEditor" class="btn ghost">Copiar</button><button id="sendEditorAI" class="btn primary">Revisar com IA</button></div>
+        </div>
+        <div class="code-wrap"><div id="lineNumbers" class="lines">1</div><textarea id="codeEditor" class="code" spellcheck="false"></textarea></div>
+      </div>
+      <aside class="card editor-side">
+        <div class="side-block"><div class="panel-title">Metadados</div><label>Descrição</label><textarea id="editorDesc" class="editor-input" style="width:100%;min-height:90px;resize:vertical"></textarea></div>
+        <div class="side-block"><label>Tags</label><div id="editorTags" class="tag-editor"></div><div style="display:flex;gap:6px;margin-top:7px"><input id="newTag" class="tag-input" placeholder="ex.: combat"><button id="addTag" class="btn ghost">＋</button></div></div>
+        <div class="side-block"><label>Tipo</label><select id="editorType" class="select" style="width:100%"><option value="system">Sistema</option><option value="snippet">Snippet</option><option value="script">Script</option><option value="module">ModuleScript</option></select></div>
+        <div class="side-block"><label>Ajuda</label><div class="editor-note">Use Ctrl+S para salvar. O conteúdo fica no localStorage do navegador. Para mover seu vault para outra máquina, use Exportar.</div></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="modules" class="view">
+    <div class="section-head"><div><h2>🧩 Module Garden</h2><p>Pesquisa local de módulos prontos e editáveis para acelerar seus projetos Roblox.</p></div></div>
+    <div class="card" style="padding:13px;margin-bottom:14px">
+      <div class="module-toolbar"><input id="moduleSearch" class="search" style="padding:11px 13px" placeholder="Pesquisar por nome, descrição ou tag..."><select id="moduleCategory" class="select"><option value="all">Todas as categorias</option><option value="Data">Data</option><option value="Network">Network</option><option value="Player">Player</option><option value="Utility">Utility</option><option value="UI">UI</option><option value="Gameplay">Gameplay</option></select></div>
+    </div>
+    <div id="moduleGrid" class="grid cols3"></div>
+  </section>
+
+  <section id="ai" class="view">
+    <div class="section-head"><div><h2>✨ Code AI</h2><p>Copiloto local para revisão + ponte opcional para uma IA externa.</p></div><button id="aiFromCurrent" class="btn ghost">Usar script atual</button></div>
+    <div class="ai-layout">
+      <div class="card ai-chat">
+        <div id="messages" class="messages"></div>
+        <div class="ai-compose"><textarea id="aiInput" class="ai-input" placeholder="Ex.: encontre possíveis bugs neste sistema de DataStore e explique como melhorar..."></textarea><button id="aiSend" class="btn primary">Enviar</button></div>
+      </div>
+      <aside class="card ai-sidebar">
+        <div class="panel-title">Prompts rápidos</div>
+        <div class="prompt-list">
+          <button class="prompt">🔎 Revisar meu código e achar bugs</button>
+          <button class="prompt">🧹 Organizar este script em módulos</button>
+          <button class="prompt">⚡ Otimizar loops e conexões</button>
+          <button class="prompt">🧠 Explicar este código linha por linha</button>
+          <button class="prompt">🛡️ Verificar segurança client/server</button>
+          <button class="prompt">🧩 Transformar em ModuleScript</button>
+        </div>
+        <div class="callout" style="margin-top:14px"><b>Modo local:</b> funciona sem chave de API e analisa padrões comuns de Luau/Roblox. <br><br><b>IA externa:</b> configure um endpoint compatível na página Settings; a chave é mantida apenas nesta sessão.</div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="docs" class="view">
+    <div class="section-head"><div><h2>📖 Luau Docs Garden</h2><p>Guia próprio, pesquisável e focado em Roblox, baseado nas áreas atuais da documentação oficial.</p></div><a href="https://create.roblox.com/docs/luau" target="_blank" class="btn ghost">Abrir oficial ↗</a></div>
+    <div class="doc-layout">
+      <nav id="docNav" class="card doc-nav"></nav>
+      <article id="docContent" class="card doc-content"></article>
+    </div>
+  </section>
+
+
+  <section id="projects" class="view">
+    <div class="section-head">
+      <div><h2>🗂️ Projects</h2><p>Organize seu universo Roblox por jogo, sistema ou experiência.</p></div>
+      <button id="newProjectBtn" class="btn primary">＋ Novo projeto</button>
+    </div>
+    <div id="projectGrid" class="workspace-grid stagger"></div>
+    <div class="section-head"><div><h2>Mini board</h2><p>Uma visão rápida do que está sendo construído.</p></div></div>
+    <div class="kanban">
+      <div class="card kanban-col"><h4>🌱 Ideias</h4><div id="taskIdeas"></div><button class="btn ghost" data-task-column="ideas">＋ tarefa</button></div>
+      <div class="card kanban-col"><h4>💧 Em desenvolvimento</h4><div id="taskDoing"></div><button class="btn ghost" data-task-column="doing">＋ tarefa</button></div>
+      <div class="card kanban-col"><h4>🌿 Pronto</h4><div id="taskDone"></div><button class="btn ghost" data-task-column="done">＋ tarefa</button></div>
+    </div>
+  </section>
+
+  <section id="snippets" class="view">
+    <div class="section-head"><div><h2>⚡ Snippet Lab</h2><p>Pequenas peças de código prontas para adaptar ao seu projeto.</p></div><button id="saveSnippetBtn" class="btn green">＋ Salvar snippet do editor</button></div>
+    <div class="card" style="padding:13px;margin-bottom:14px">
+      <input id="snippetSearch" class="search" style="padding:11px 13px" placeholder="Buscar snippets por título, tag ou código...">
+    </div>
+    <div id="snippetGrid" class="grid cols3 stagger"></div>
+  </section>
+
+  <section id="playground" class="view">
+    <div class="section-head"><div><h2>▶️ Luau Playground</h2><p>Rascunhe código, formate e faça uma análise rápida sem precisar abrir o Studio.</p></div>
+      <div class="toolbar"><button id="playFormat" class="btn ghost">Formatar</button><button id="playAnalyze" class="btn ghost">Analisar</button><button id="playRun" class="btn primary">▶ Simular</button></div>
+    </div>
+    <div class="playground">
+      <div class="card play-area">
+        <textarea id="playCode" class="play-editor" spellcheck="false">--!strict
+local coins: number = 100
+
+local function buy(price: number)
+    if coins >= price then
+        coins -= price
+        print(`Compra aprovada! Restam {coins} coins.`)
+    else
+        warn("Coins insuficientes.")
+    end
+end
+
+buy(35)</textarea>
+      </div>
+      <div class="card console-area">
+        <div class="card-row" style="margin-bottom:9px"><div class="panel-title">Console virtual</div><button id="clearConsole" class="btn ghost">Limpar</button></div>
+        <div id="playConsole" class="console"><div class="line">RBXGarden virtual console ready.</div><div class="line">Este playground simula padrões básicos; não executa Luau real.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="focus" class="view">
+    <div class="section-head"><div><h2>🫧 Focus Mode</h2><p>Modo sem distrações para construir sistemas maiores.</p></div></div>
+    <div class="card focus-card">
+      <div class="focus-label">sessão atual</div>
+      <div id="focusRing" class="focus-ring"><div><div id="focusTime" class="focus-time">25:00</div><div id="focusState" class="focus-label" style="text-align:center">Pronto</div></div></div>
+      <div class="focus-controls"><button id="focusStart" class="btn primary">Iniciar</button><button id="focusPause" class="btn ghost">Pausar</button><button id="focusReset" class="btn ghost">Resetar</button></div>
+      <div class="callout" style="max-width:540px;text-align:center"><b>Dica:</b> escolha uma única tarefa, coloque o celular longe e deixe o Script Vault aberto apenas no projeto necessário.</div>
+    </div>
+  </section>
+
+  <section id="roadmap" class="view">
+    <div class="section-head"><div><h2>🗺️ Luau Roadmap</h2><p>Uma trilha visual para sair do básico e chegar a sistemas modulares.</p></div></div>
+    <div id="roadmapList" class="roadmap"></div>
+  </section>
+
+  <section id="settings" class="view">
+    <div class="section-head"><div><h2>⚙️ Settings</h2><p>Personalize o hub e configure a ponte de IA.</p></div></div>
+    <div class="grid cols2">
+      <div class="card" style="padding:20px">
+        <div class="panel-title">Aparência</div>
+        <div class="pill-row" style="margin:10px 0">
+          <button id="motionToggle" class="chip-btn active">✨ Animações</button>
+          <button id="densityToggle" class="chip-btn">🌿 Densidade compacta</button>
+        </div>
+        <div class="callout">O tema Frutiger já vem ativado: vidro, água, luz, natureza e superfícies suaves. As configurações são salvas neste navegador.</div>
+        <label style="display:block;font-size:10px;font-weight:900;color:#6d8590;text-transform:uppercase;letter-spacing:.12em;margin:12px 0 6px">Nome do workspace</label>
+        <input id="workspaceName" class="editor-input" style="width:100%" value="RBXGarden">
+        <button id="saveSettings" class="btn green" style="margin-top:10px">Salvar preferências</button>
+        <button id="resetData" class="btn danger" style="margin-top:10px;margin-left:6px">Resetar dados locais</button>
+      </div>
+      <div class="card" style="padding:20px">
+        <div class="panel-title">Ponte de IA externa</div>
+        <p class="muted">Use um pequeno backend seu ou um endpoint compatível com sua plataforma de IA. Não coloque uma chave permanente em um site público.</p>
+        <div class="form-grid">
+          <div class="full"><label>Endpoint</label><input id="aiEndpoint" placeholder="https://seu-backend.exemplo/chat"></div>
+          <div><label>Modelo</label><input id="aiModel" placeholder="seu-modelo"></div>
+          <div><label>Formato</label><select id="aiFormat"><option value="openai">OpenAI-compatible</option><option value="generic">JSON genérico</option></select></div>
+          <div class="full"><label>Chave temporária (não salva)</label><input id="aiKey" type="password" placeholder="cole apenas quando for usar"></div>
+        </div>
+        <button id="testAI" class="btn primary" style="margin-top:12px">Testar conexão</button>
+      </div>
+    </div>
+    <div class="section-head"><div><h2>Fontes oficiais</h2><p>Consulte a referência mais completa e atualizada fora do hub.</p></div></div>
+    <div class="grid cols3">
+      <a class="card script-card" href="https://create.roblox.com/docs/luau" target="_blank"><div class="card-title">Luau</div><div class="card-desc">Visão geral da linguagem e recursos.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/luau/type-checking" target="_blank"><div class="card-title">Type checking</div><div class="card-desc">Annotations, strict, generics e tipos.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/cloud-services/data-stores" target="_blank"><div class="card-title">Data stores</div><div class="card-desc">Persistência, acesso em Studio e boas práticas.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/reference/engine/classes/RemoteEvent" target="_blank"><div class="card-title">RemoteEvent</div><div class="card-desc">Comunicação assíncrona entre cliente e servidor.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/studio/script-editor" target="_blank"><div class="card-title">Script Editor</div><div class="card-desc">Autocompletar, análise, formatação e navegação.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/scripting/services" target="_blank"><div class="card-title">Services</div><div class="card-desc">Panorama dos serviços comuns do Roblox.</div></a>
+    </div>
+  </section>
+
+  <footer>RBXGarden • feito para organizar projetos Roblox • os dados do Vault ficam neste navegador</footer>
+</main>
+</div>
+
+<div id="modal" class="modal-backdrop"><div class="modal card">
+  <div class="section-head" style="margin-top:0"><div><h2 id="modalTitle">Novo script</h2><p id="modalSub">Crie um item para seu vault.</p></div><button id="closeModal" class="icon-btn">×</button></div>
+  <div class="form-grid">
+    <div><label>Nome</label><input id="formName" value="NovoScript"></div>
+    <div><label>Tipo</label><select id="formType"><option value="system">Sistema</option><option value="snippet">Snippet</option><option value="script">Script</option><option value="module">ModuleScript</option></select></div>
+    <div class="full"><label>Descrição</label><input id="formDesc" placeholder="Para que este script serve?"></div>
+    <div class="full"><label>Tags (separe por vírgulas)</label><input id="formTags" placeholder="datastore, player, save"></div>
+    <div class="full"><label>Código</label><textarea id="formCode"></textarea></div>
+  </div>
+  <div class="modal-actions"><button id="cancelModal" class="btn ghost">Cancelar</button><button id="confirmModal" class="btn primary">Criar</button></div>
+</div></div>
+
+<div id="cmd" class="cmd"><div class="cmd-box card"><input id="cmdInput" class="cmd-input" placeholder="Digite um comando..."><div id="cmdResults" class="cmd-results"></div></div></div>
+<div id="toast" class="toast"></div>
+<input id="fileInput" type="file" accept=".json,.txt,.lua,.luau" style="display:none">
+
+<script>
+const qs = s => document.querySelector(s);
+const qsa = s => [...document.querySelectorAll(s)];
+const KEY = "rbxgarden_v3";
+
+const DEFAULT_SCRIPT = `--!strict
+local Players = game:GetService("Players")
+
+Players.PlayerAdded:Connect(function(player: Player)
+    print(("Bem-vindo, %s!"):format(player.Name))
+end)`;
+
+const MODULES = [
+  {
+    id:"datastore", icon:"💾", name:"DataStoreService Wrapper", category:"Data",
+    tags:["datastore","save","profile","server"],
+    desc:"Camada modular para GetAsync/SetAsync/UpdateAsync com cache, retry e pontos de extensão.",
+    code:`--!strict
+local DataStoreService = game:GetService("DataStoreService")
+
+local Store = DataStoreService:GetDataStore("PlayerData_v1")
+
+local DataService = {}
+DataService.Default = {
+    Coins = 0,
+    Level = 1,
+    Inventory = {},
+}
+
+function DataService:GetKey(player: Player): string
+    return "Player_" .. player.UserId
+end
+
+function DataService:Load(player: Player)
+    local key = self:GetKey(player)
+    local ok, data = pcall(function()
+        return Store:GetAsync(key)
+    end)
+
+    if ok and type(data) == "table" then
+        return data
+    end
+
+    return table.clone(self.Default)
+end
+
+function DataService:Save(player: Player, data)
+    local key = self:GetKey(player)
+    local ok, err = pcall(function()
+        Store:UpdateAsync(key, function()
+            return data
+        end)
+    end)
+
+    if not ok then
+        warn("Data save failed:", player.Name, err)
+    end
+
+    return ok
+end
+
+return DataService`
+  },
+  {
+    id:"remotes",icon:"📡",name:"RemoteBridge",category:"Network",
+    tags:["remote","network","client","server"],
+    desc:"Criação organizada de RemoteEvent/RemoteFunction em uma pasta dedicada.",
+    code:`--!strict
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local folder = ReplicatedStorage:FindFirstChild("Remotes")
+if not folder then
+    folder = Instance.new("Folder")
+    folder.Name = "Remotes"
+    folder.Parent = ReplicatedStorage
+end
+
+local RemoteBridge = {}
+
+function RemoteBridge:GetEvent(name: string): RemoteEvent
+    local item = folder:FindFirstChild(name)
+    if item and item:IsA("RemoteEvent") then
+        return item
+    end
+
+    local event = Instance.new("RemoteEvent")
+    event.Name = name
+    event.Parent = folder
+    return event
+end
+
+function RemoteBridge:GetFunction(name: string): RemoteFunction
+    local item = folder:FindFirstChild(name)
+    if item and item:IsA("RemoteFunction") then
+        return item
+    end
+
+    local fn = Instance.new("RemoteFunction")
+    fn.Name = name
+    fn.Parent = folder
+    return fn
+end
+
+return RemoteBridge`
+  },
+  {
+    id:"playerdata",icon:"🧑",name:"PlayerData Cache",category:"Player",
+    tags:["player","cache","data","attributes"],
+    desc:"Cache simples por UserId para centralizar estado de sessão do jogador.",
+    code:`--!strict
+local PlayerData = {}
+local sessions: {[number]: {[string]: any}} = {}
+
+function PlayerData:Create(player: Player, initial)
+    sessions[player.UserId] = initial or {}
+    return sessions[player.UserId]
+end
+
+function PlayerData:Get(player: Player)
+    return sessions[player.UserId]
+end
+
+function PlayerData:Remove(player: Player)
+    sessions[player.UserId] = nil
+end
+
+function PlayerData:Set(player: Player, key: string, value: any)
+    local data = sessions[player.UserId]
+    if not data then
+        return false
+    end
+    data[key] = value
+    return true
+end
+
+return PlayerData`
+  },
+  {
+    id:"cleanup",icon:"🧹",name:"CleanupStack",category:"Utility",
+    tags:["cleanup","connections","instances","utility"],
+    desc:"Pequena estrutura para guardar RBXScriptConnection e objetos e limpar tudo no fim.",
+    code:`local Cleanup = {}
+Cleanup.__index = Cleanup
+
+function Cleanup.new()
+    return setmetatable({items = {}}, Cleanup)
+end
+
+function Cleanup:Add(item)
+    table.insert(self.items, item)
+    return item
+end
+
+function Cleanup:Destroy()
+    for _, item in ipairs(self.items) do
+        local kind = typeof(item)
+
+        if kind == "RBXScriptConnection" then
+            item:Disconnect()
+        elseif typeof(item) == "Instance" then
+            item:Destroy()
+        elseif type(item) == "function" then
+            item()
+        elseif type(item) == "table" and item.Destroy then
+            item:Destroy()
+        end
+    end
+
+    table.clear(self.items)
+end
+
+return Cleanup`
+  },
+  {
+    id:"number",icon:"🔢",name:"BigNumber",category:"Utility",
+    tags:["numbers","incremental","format","economy"],
+    desc:"Formatador de números para jogos incrementais e economias com valores grandes.",
+    code:`local BigNumber = {}
+
+function BigNumber.Format(n: number): string
+    local suffixes = {"", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No"}
+    local i = 1
+
+    while math.abs(n) >= 1000 and i < #suffixes do
+        n /= 1000
+        i += 1
+    end
+
+    if i == 1 then
+        return tostring(math.floor(n))
+    end
+
+    return string.format("%.2f%s", n, suffixes[i])
+end
+
+return BigNumber`
+  },
+  {
+    id:"signal",icon:"📣",name:"Signal",category:"Utility",
+    tags:["signal","events","modules","communication"],
+    desc:"Evento local entre módulos sem precisar espalhar BindableEvents.",
+    code:`local Signal = {}
+Signal.__index = Signal
+
+function Signal.new()
+    return setmetatable({listeners = {}}, Signal)
+end
+
+function Signal:Connect(callback)
+    local connection = {Connected = true, Callback = callback}
+    table.insert(self.listeners, connection)
+
+    function connection:Disconnect()
+        self.Connected = false
+    end
+
+    return connection
+end
+
+function Signal:Fire(...)
+    for _, listener in self.listeners do
+        if listener.Connected then
+            task.spawn(listener.Callback, ...)
+        end
+    end
+end
+
+function Signal:Destroy()
+    table.clear(self.listeners)
+end
+
+return Signal`
+  },
+  {
+    id:"cooldown",icon:"⏱️",name:"CooldownService",category:"Gameplay",
+    tags:["cooldown","skills","combat","abilities"],
+    desc:"Cooldowns por jogador e chave, com API simples para skills e ações.",
+    code:`local CooldownService = {}
+local active = {}
+
+function CooldownService:Use(player: Player, key: string, duration: number): boolean
+    active[player] = active[player] or {}
+
+    if active[player][key] then
+        return false
+    end
+
+    active[player][key] = true
+    task.delay(duration, function()
+        if active[player] then
+            active[player][key] = nil
+        end
+    end)
+
+    return true
+end
+
+function CooldownService:IsCooling(player: Player, key: string): boolean
+    return active[player] and active[player][key] == true or false
+end
+
+return CooldownService`
+  },
+  {
+    id:"inventory",icon:"🎒",name:"InventoryService",category:"Gameplay",
+    tags:["inventory","items","data","economy"],
+    desc:"Estrutura básica e extensível para inventário server-side.",
+    code:`local InventoryService = {}
+
+function InventoryService:Add(inventory, itemId: string, amount: number?)
+    inventory[itemId] = (inventory[itemId] or 0) + (amount or 1)
+end
+
+function InventoryService:Remove(inventory, itemId: string, amount: number?)
+    local current = inventory[itemId] or 0
+    local take = amount or 1
+
+    if current < take then
+        return false
+    end
+
+    inventory[itemId] = current - take
+
+    if inventory[itemId] <= 0 then
+        inventory[itemId] = nil
+    end
+
+    return true
+end
+
+function InventoryService:Has(inventory, itemId: string, amount: number?): boolean
+    return (inventory[itemId] or 0) >= (amount or 1)
+end
+
+return InventoryService`
+  },
+  {
+    id:"ui",icon:"🎨",name:"UIController",category:"UI",
+    tags:["ui","gui","tween","animation"],
+    desc:"Controlador simples para abrir/fechar interfaces e centralizar ações visuais.",
+    code:`local TweenService = game:GetService("TweenService")
+
+local UIController = {}
+
+function UIController:Open(frame: GuiObject)
+    frame.Visible = true
+    frame.Position = UDim2.fromScale(0.5, 0.54)
+
+    TweenService:Create(
+        frame,
+        TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Position = UDim2.fromScale(0.5, 0.5)}
+    ):Play()
+end
+
+function UIController:Close(frame: GuiObject)
+    local tween = TweenService:Create(
+        frame,
+        TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Position = UDim2.fromScale(0.5, 0.54)}
+    )
+
+    tween.Completed:Once(function()
+        frame.Visible = false
+    end)
+
+    tween:Play()
+end
+
+return UIController`
+  },
+  {
+    id:"service",icon:"🧰",name:"ServiceLocator",category:"Utility",
+    tags:["services","architecture","modules","bootstrap"],
+    desc:"Padrão de acesso centralizado para seus módulos e serviços internos.",
+    code:`local ServiceLocator = {}
+local services = {}
+
+function ServiceLocator:Register(name: string, service)
+    assert(services[name] == nil, "Service already registered: " .. name)
+    services[name] = service
+end
+
+function ServiceLocator:Get(name: string)
+    local service = services[name]
+    assert(service ~= nil, "Unknown service: " .. name)
+    return service
+end
+
+function ServiceLocator:Has(name: string): boolean
+    return services[name] ~= nil
+end
+
+return ServiceLocator`
+  }
+];
+
+const DOCS = [
+  {id:"intro",title:"Começando",html:`
+    <h2>Começando com Luau</h2>
+    <p>Luau é a linguagem de script usada pelos criadores no Roblox. Ela deriva do Lua 5.1 e adiciona recursos como tipagem gradual, interpolação de strings e iteração generalizada de tabelas.</p>
+    <div class="callout"><b>Ideia central:</b> aprenda primeiro a linguagem e, em seguida, o modelo de objetos/serviços do Roblox. Seu código fica mais fácil de escalar quando essas duas camadas estão bem separadas.</div>
+    <pre>print("Olá, Roblox!")
+
+local coins = 100
+local playerName = "Bernardo"
+print(\`Jogador: {playerName} | Coins: {coins}\`)</pre>
+    <h3>O ciclo básico</h3>
+    <p>Um projeto Roblox normalmente combina Scripts no servidor, LocalScripts no cliente e ModuleScripts para compartilhar lógica e organizar sistemas.</p>`},
+  {id:"variables",title:"Variáveis",html:`
+    <h2>Variáveis e escopo</h2>
+    <p>Prefira <code>local</code> para evitar globais desnecessárias. O escopo local ajuda a reduzir efeitos colaterais e torna módulos mais previsíveis.</p>
+    <pre>local coins = 250
+local playerName = "Builder"
+local online = true
+local nothing = nil
+
+local function printPlayer()
+    print(playerName, coins, online)
+end
+
+printPlayer()</pre>
+    <h3>Boas bases</h3>
+    <p>Use nomes que descrevem intenção, concentre estado em tabelas quando necessário e evite mutar dados globais sem motivo.</p>`},
+  {id:"types",title:"Tipos",html:`
+    <h2>Tipos e annotations</h2>
+    <p>Luau é gradualmente tipado: você pode começar sem annotations e adicioná-las onde elas aumentam segurança e clareza.</p>
+    <pre>local coins: number = 100
+local playerName: string = "Builder"
+local alive: boolean = true
+
+local function addCoins(amount: number): number
+    coins += amount
+    return coins
+end</pre>
+    <h3>Modos de análise</h3>
+    <p><code>--!nocheck</code> desativa a verificação, <code>--!nonstrict</code> é menos permissivo apenas em tipos anotados e <code>--!strict</code> pede verificação mais ampla.</p>
+    <div class="callout">Para sistemas grandes, experimente <b>--!strict</b> e crie tipos compartilhados em ModuleScripts.</div>`},
+  {id:"functions",title:"Funções",html:`
+    <h2>Funções</h2>
+    <p>Funções encapsulam comportamento e são a principal unidade de reutilização.</p>
+    <pre>local function add(a: number, b: number): number
+    return a + b
+end
+
+local result = add(10, 25)
+
+local function greet(name: string)
+    print(\`Olá, {name}!\`)
+end
+
+greet("Builder")</pre>
+    <h3>Métodos com self</h3>
+    <pre>local Counter = {}
+Counter.__index = Counter
+
+function Counter.new()
+    return setmetatable({Value = 0}, Counter)
+end
+
+function Counter:Add(amount: number)
+    self.Value += amount
+end</pre>`},
+  {id:"conditions",title:"Condições",html:`
+    <h2>Condições</h2>
+    <p>Use <code>if</code>, <code>elseif</code> e <code>else</code> para decisões.</p>
+    <pre>local coins = 150
+
+if coins >= 100 then
+    print("Pode comprar")
+elseif coins > 0 then
+    print("Tem algumas coins")
+else
+    print("Sem coins")
+end
+
+local allowed = coins >= 100 and true or false</pre>`},
+  {id:"loops",title:"Loops",html:`
+    <h2>Loops e iteração</h2>
+    <pre>for i = 1, 5 do
+    print(i)
+end
+
+local players = game:GetService("Players")
+
+for _, player in players:GetPlayers() do
+    print(player.Name)
+end
+
+while task.wait(1) do
+    print("tick")
+end</pre>
+    <p>Em servidores Roblox, pense sempre sobre frequência e condição de saída para não criar trabalho desnecessário.</p>`},
+  {id:"tables",title:"Tables",html:`
+    <h2>Tables</h2>
+    <p>Tables podem representar listas, dicionários e estruturas de dados.</p>
+    <pre>local fruits = {"Apple", "Pear", "Mango"}
+
+local playerData = {
+    Coins = 100,
+    Level = 5,
+    Inventory = {"Sword", "Potion"},
+}
+
+table.insert(fruits, "Banana")
+
+for index, fruit in fruits do
+    print(index, fruit)
+end
+
+print(playerData.Coins)</pre>`},
+  {id:"vectors",title:"Vector3 e CFrame",html:`
+    <h2>Vetores e transformações Roblox</h2>
+    <p>Em Roblox, vetores são essenciais para posição, direção e velocidade. <code>Vector3</code> possui X, Y e Z. <code>CFrame</code> representa posição e orientação.</p>
+    <pre>local part = workspace.Part
+
+local direction = Vector3.new(0, 1, 0)
+part.Position += direction * 5
+
+local target = CFrame.new(0, 5, -10)
+part.CFrame = target</pre>
+    <h3>Exemplo de direção</h3>
+    <pre>local offset = targetPart.Position - part.Position
+local distance = offset.Magnitude
+local direction = offset.Unit</pre>`},
+  {id:"events",title:"Events",html:`
+    <h2>Eventos</h2>
+    <p>Roblox usa sinais para reagir a acontecimentos. Conectar uma função é uma das operações mais comuns em scripts.</p>
+    <pre>local Players = game:GetService("Players")
+
+Players.PlayerAdded:Connect(function(player)
+    print("Entrou:", player.Name)
+end)
+
+local part = workspace.Part
+
+part.Touched:Connect(function(hit)
+    print("Tocou:", hit.Name)
+end)</pre>
+    <div class="callout">Guarde conexões quando o ciclo de vida do objeto for importante. Uma estrutura de cleanup pode evitar conexões esquecidas.</div>`},
+  {id:"modules",title:"ModuleScripts",html:`
+    <h2>ModuleScripts</h2>
+    <p>Um ModuleScript normalmente retorna uma tabela, função ou outro valor. Eles são ideais para separar configurações, utilitários e serviços.</p>
+    <pre>-- ModuleScript
+local MoneyService = {}
+
+function MoneyService:Add(data, amount)
+    data.Coins += amount
+end
+
+return MoneyService
+
+-- outro Script
+local MoneyService = require(path.To.MoneyService)
+MoneyService:Add(playerData, 50)</pre>
+    <h3>Arquitetura recomendada</h3>
+    <p>Use módulos para domínio, configuração e serviços. Deixe o Script de bootstrap inicializar o sistema, em vez de espalhar lógica idêntica em muitos lugares.</p>`},
+  {id:"clientserver",title:"Cliente x servidor",html:`
+    <h2>Cliente x servidor</h2>
+    <p>O servidor deve ser a autoridade para regras importantes do jogo, como moeda, inventário, dano e persistência. O cliente é ótimo para input, interface e efeitos locais.</p>
+    <pre>-- Server
+RemoteEvent.OnServerEvent:Connect(function(player, action)
+    -- valide player, action e todos os valores recebidos
+end)
+
+-- Client
+RemoteEvent:FireServer("OpenShop")</pre>
+    <div class="callout"><b>Regra prática:</b> nunca confie em valores enviados pelo cliente só porque a interface diz que eles são válidos.</div>`},
+  {id:"remotes",title:"RemoteEvent",html:`
+    <h2>RemoteEvent</h2>
+    <p><code>RemoteEvent</code> permite comunicação assíncrona de mão única entre cliente e servidor. É comum colocá-lo em <code>ReplicatedStorage</code> para ambos os lados acessarem.</p>
+    <pre>-- client
+ShopRemote:FireServer("Buy", "Potion", 1)
+
+-- server
+ShopRemote.OnServerEvent:Connect(function(player, action, itemId, amount)
+    if action ~= "Buy" then return end
+    -- valide tudo antes de executar
+end)</pre>`},
+  {id:"datastore",title:"DataStore",html:`
+    <h2>DataStoreService</h2>
+    <p><code>DataStoreService</code> é usado para persistir dados entre sessões. Uma camada própria costuma ser útil para padronizar chaves, retries, cache, schema e tratamento de erros.</p>
+    <pre>local DataStoreService = game:GetService("DataStoreService")
+local store = DataStoreService:GetDataStore("PlayerData_v1")
+
+local ok, value = pcall(function()
+    return store:GetAsync("Player_" .. player.UserId)
+end)</pre>
+    <h3>Studio</h3>
+    <p>Ao testar DataStores no Studio, o acesso precisa ser habilitado nas configurações apropriadas. Tenha cuidado para não misturar testes com os dados de produção.</p>`},
+  {id:"metatables",title:"Metatables",html:`
+    <h2>Metatables e objetos</h2>
+    <p>Metatables permitem definir comportamentos especiais para tabelas. Um padrão comum é usar <code>__index</code> para construir objetos baseados em protótipos.</p>
+    <pre>local Pet = {}
+Pet.__index = Pet
+
+function Pet.new(name: string)
+    return setmetatable({
+        Name = name,
+        Level = 1,
+    }, Pet)
+end
+
+function Pet:LevelUp()
+    self.Level += 1
+end</pre>`},
+  {id:"generics",title:"Generics",html:`
+    <h2>Generics</h2>
+    <p>Generics tornam funções e tipos reutilizáveis em várias formas de dados.</p>
+    <pre>type State<T> = {
+    Key: string,
+    Value: T,
+}
+
+local function createState<T>(key: string, value: T): State<T>
+    return {
+        Key = key,
+        Value = value,
+    }
+end
+
+local coins = createState("Coins", 0)
+local enabled = createState("Enabled", true)</pre>
+    <h3>Export type</h3>
+    <pre>-- Types Module
+export type PlayerProfile = {
+    Coins: number,
+    Level: number,
+}
+
+-- outro ModuleScript
+local Types = require(path.Types)
+local profile: Types.PlayerProfile = {
+    Coins = 0,
+    Level = 1,
+}</pre>`},
+  {id:"strings",title:"Strings",html:`
+    <h2>Strings e interpolação</h2>
+    <p>Luau possui interpolação com crases, útil para mensagens e UI sem precisar concatenar tudo manualmente.</p>
+    <pre>local player = "Builder"
+local level = 12
+
+print(\`{player} chegou ao nível {level}.\`)</pre>
+    <p>Para estruturas grandes, mantenha formatação próxima do lugar onde o texto é produzido e evite misturar lógica de negócio com UI.</p>`},
+  {id:"performance",title:"Performance",html:`
+    <h2>Performance</h2>
+    <p>Comece com código claro e meça antes de otimizar. Evite loops apertados desnecessários, buscas repetitivas na hierarquia e criação excessiva de conexões/instâncias.</p>
+    <pre>-- melhor: recupere uma vez
+local Players = game:GetService("Players")
+
+local function countPlayers()
+    return #Players:GetPlayers()
+end</pre>
+    <div class="callout">O Script Editor do Roblox fornece autocomplete, análise de script e diagnóstico em tempo real. Use essas ferramentas junto com testes e profiling.</div>`}
+];
+
+let state = {
+  scripts: [],
+  activeId: null,
+  vaultFilter: "all",
+  docId: "intro",
+  settings: {workspaceName:"RBXGarden", aiEndpoint:"", aiModel:"", aiFormat:"openai"},
+  aiMessages: []
+};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw) state = {...state,...JSON.parse(raw),settings:{...state.settings,...(JSON.parse(raw).settings||{})}};
+  }catch(e){console.warn(e)}
+  if(!state.scripts.length){
+    state.scripts = [
+      {id:uid(),name:"PlayerData_Starter",type:"system",description:"Base para PlayerAdded + dados de sessão.",tags:["player","data","starter"],favorite:true,code:DEFAULT_SCRIPT,updated:Date.now()},
+      {id:uid(),name:"BuyButton",type:"snippet",description:"Exemplo simples de compra com validação local.",tags:["ui","shop","snippet"],favorite:false,code:`local button = script.Parent
+
+button.Activated:Connect(function()
+    local money = 150
+    local price = 100
+
+    if money >= price then
+        print("Compra aprovada")
+    else
+        print("Dinheiro insuficiente")
+    end
+end)`,updated:Date.now()-8000}
+    ];
+  }
+  saveState();
+}
+function saveState(){localStorage.setItem(KEY,JSON.stringify(state))}
+function uid(){return "s_"+Date.now()+"_"+Math.random().toString(36).slice(2,7)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function toast(msg){const t=qs("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2300)}
+function showView(id){
+  qsa(".view").forEach(v=>v.classList.toggle("active",v.id===id));
+  qsa(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(id==="dashboard")renderDashboard();
+  if(id==="vault")renderVault();
+  if(id==="modules")renderModules();
+  if(id==="docs")renderDocs();
+  if(id==="settings")renderSettings();
+}
+function countTags(){return new Set(state.scripts.flatMap(s=>s.tags||[])).size}
+function renderDashboard(){
+  if(qs("#achievementStrip") && typeof updateAchievementStrip === "function") updateAchievementStrip();
+  qs("#dashScripts").textContent=state.scripts.length;
+  qs("#kpiScripts").textContent=state.scripts.length;
+  qs("#dashTags").textContent=countTags();
+  const recent=[...state.scripts].sort((a,b)=>b.updated-a.updated).slice(0,3);
+  qs("#recentScripts").innerHTML=recent.length?recent.map(scriptCardHTML).join('<'):'<div class="card empty">Nenhum script ainda. Crie o primeiro no Script Vault.</div>';
+  // Rebuild safely if separator collapsed
+  qs("#recentScripts").innerHTML=recent.map(scriptCardHTML).join("");
+  bindScriptCards(qs("#recentScripts"));
+}
+function scriptCardHTML(s){
+  return `<article class="card script-card" data-script="${esc(s.id)}">
+    <div class="card-row"><div class="badges">${(s.tags||[]).slice(0,3).map(t=>`<span class="badge">${esc(t)}</span>`).join("")}</div><button class="icon-btn fav" title="Favorito">${s.favorite?"★":"☆"}</button></div>
+    <div class="card-title">${esc(s.name)}</div>
+    <div class="card-desc">${esc(s.description||"Sem descrição.")}</div>
+    <div class="card-foot"><span class="muted">${esc(s.type)}</span><button class="btn primary open-script">Abrir</button></div>
+  </article>`;
+}
+function bindScriptCards(root){
+  root.querySelectorAll("[data-script]").forEach(card=>{
+    const id=card.dataset.script;
+    card.querySelector(".open-script")?.addEventListener("click",()=>openEditor(id));
+    card.querySelector(".fav")?.addEventListener("click",e=>{e.stopPropagation();toggleFavorite(id)});
+    card.addEventListener("dblclick",()=>openEditor(id));
+  });
+}
+function renderVault(){
+  const q=(qs("#globalSearch").value||"").toLowerCase().trim();
+  let arr=state.scripts;
+  if(state.vaultFilter==="favorite")arr=arr.filter(s=>s.favorite);
+  if(state.vaultFilter==="snippet")arr=arr.filter(s=>s.type==="snippet");
+  if(state.vaultFilter==="system")arr=arr.filter(s=>s.type==="system"||s.type==="module");
+  if(q)arr=arr.filter(s=>(s.name+" "+s.description+" "+(s.tags||[]).join(" ")).toLowerCase().includes(q));
+  qs("#vaultGrid").innerHTML=arr.length?arr.map(s=>scriptCardHTML({...s})).join(""):`<div class="card empty">Nada encontrado. Experimente outra busca ou crie um script.</div>`;
+  qsa("[data-vault-filter]").forEach(b=>b.classList.toggle("active",b.dataset.vaultFilter===state.vaultFilter));
+  bindScriptCards(qs("#vaultGrid"));
+}
+function toggleFavorite(id){const s=state.scripts.find(x=>x.id===id);if(!s)return;s.favorite=!s.favorite;s.updated=Date.now();saveState();renderVault();renderDashboard();toast(s.favorite?"Adicionado aos favoritos":"Removido dos favoritos")}
+function newScript(prefill={}){
+  const s={id:uid(),name:prefill.name||"NovoScript",type:prefill.type||"module",description:prefill.description||"",tags:prefill.tags||["roblox","luau"],favorite:false,code:prefill.code||"--!strict\\n\\nlocal Module = {}\\n\\nreturn Module",updated:Date.now()};
+  state.scripts.unshift(s);saveState();openEditor(s.id);
+}
+function openEditor(id){
+  const s=state.scripts.find(x=>x.id===id);if(!s)return;
+  state.activeId=id;saveState();
+  qs("#editorTitle").value=s.name;qs("#editorDesc").value=s.description||"";qs("#editorType").value=s.type;qs("#codeEditor").value=s.code||"";renderEditorTags();updateLines();showView("editor");
+}
+function renderEditorTags(){
+  const s=state.scripts.find(x=>x.id===state.activeId);if(!s)return;
+  qs("#editorTags").innerHTML=(s.tags||[]).map((t,i)=>`<span class="badge" data-remove-tag="${i}">${esc(t)} ×</span>`).join("");
+  qs("#editorTags").querySelectorAll("[data-remove-tag]").forEach(el=>el.onclick=()=>{s.tags.splice(Number(el.dataset.removeTag),1);saveState();renderEditorTags()});
+}
+function saveEditor(){
+  const s=state.scripts.find(x=>x.id===state.activeId);if(!s)return;
+  s.name=qs("#editorTitle").value.trim()||"SemNome";s.description=qs("#editorDesc").value;s.type=qs("#editorType").value;s.code=qs("#codeEditor").value;s.updated=Date.now();saveState();renderDashboard();toast("Script salvo automaticamente")}
+function deleteScript(id){
+  const idx=state.scripts.findIndex(x=>x.id===id);if(idx<0)return;
+  state.scripts.splice(idx,1);if(state.activeId===id)state.activeId=null;saveState();renderVault();renderDashboard();toast("Script removido")}
+function duplicateScript(id){
+  const s=state.scripts.find(x=>x.id===id);if(!s)return;
+  newScript({...s,id:null,name:s.name+" Copy",favorite:false});
+}
+function addEditorTag(){
+  const val=qs("#newTag").value.trim().toLowerCase().replace(/\s+/g,"-");if(!val)return;
+  const s=state.scripts.find(x=>x.id===state.activeId);if(!s)return;
+  s.tags=s.tags||[];if(!s.tags.includes(val))s.tags.push(val);qs("#newTag").value="";saveState();renderEditorTags();
+}
+function updateLines(){
+  const code=qs("#codeEditor").value||"";const count=Math.max(1,code.split("\\n").length);
+  qs("#lineNumbers").textContent=Array.from({length:count},(_,i)=>i+1).join("\\n");
+}
+function renderModules(){
+  const q=(qs("#moduleSearch").value||"").toLowerCase().trim(),cat=qs("#moduleCategory").value;
+  let arr=MODULES.filter(m=>(cat==="all"||m.category===cat)&&(!q||(m.name+" "+m.desc+" "+m.tags.join(" ")).toLowerCase().includes(q)));
+  qs("#moduleGrid").innerHTML=arr.map(m=>`<article class="card module-card">
+    <div class="card-row"><div class="module-icon">${m.icon}</div><span class="badge blue">${esc(m.category)}</span></div>
+    <div class="card-title">${esc(m.name)}</div>
+    <div class="badges">${m.tags.slice(0,4).map(t=>`<span class="badge">${esc(t)}</span>`).join("")}</div>
+    <div class="card-desc" style="margin-top:8px">${esc(m.desc)}</div>
+    <div class="card-foot"><button class="btn green module-use" data-id="${m.id}">Usar no Vault</button><button class="btn ghost module-copy" data-id="${m.id}">Copiar</button></div>
+  </article>`).join("") || `<div class="card empty">Nenhum módulo encontrado.</div>`;
+  qsa(".module-use").forEach(b=>b.onclick=()=>useModule(b.dataset.id));
+  qsa(".module-copy").forEach(b=>b.onclick=async()=>{const m=MODULES.find(x=>x.id===b.dataset.id);await navigator.clipboard.writeText(m.code);toast("Código copiado")});
+}
+function useModule(id){
+  const m=MODULES.find(x=>x.id===id);if(!m)return;
+  newScript({name:m.name,type:"module",description:m.desc,tags:m.tags.slice(0,5),code:m.code});
+}
+function renderDocs(){
+  qs("#docNav").innerHTML=DOCS.map(d=>`<button class="doc-link ${d.id===state.docId?"active":""}" data-doc="${d.id}">${esc(d.title)}</button>`).join("");
+  qs("#docContent").innerHTML=DOCS.find(d=>d.id===state.docId)?.html||"";
+  qsa("[data-doc]").forEach(b=>b.onclick=()=>{state.docId=b.dataset.doc;saveState();renderDocs()});
+}
+function renderSettings(){
+  qs("#workspaceName").value=state.settings.workspaceName||"RBXGarden";
+  qs("#aiEndpoint").value=state.settings.aiEndpoint||"";
+  qs("#aiModel").value=state.settings.aiModel||"";
+  qs("#aiFormat").value=state.settings.aiFormat||"openai";
+}
+function addMessage(role,text){
+  state.aiMessages.push({role,text,at:Date.now()});saveState();renderMessages();
+}
+function renderMessages(){
+  const box=qs("#messages");box.innerHTML="";
+  const msgs=state.aiMessages.length?state.aiMessages:[{role:"ai",text:"Olá! Sou o Code AI do RBXGarden. Posso revisar padrões de Luau/Roblox, explicar erros e sugerir arquitetura. Para uma IA generativa real, configure seu endpoint em Settings."}];
+  msgs.forEach(m=>{box.innerHTML+=`<div class="msg ${m.role==="me"?"me":""}">${m.role!=="me"?'<div class="ai-avatar">✨</div>':""}<div class="bubble-msg">${esc(m.text).replace(/\n/g,"<br>")}</div></div>`});
+  box.scrollTop=box.scrollHeight;
+}
+function localAnalyze(prompt,code){
+  const lines=code.split("\\n");
+  const notes=[];
+  if(/GetAsync|SetAsync|UpdateAsync/.test(code)&&!/pcall/.test(code))notes.push("DataStore: há chamadas de persistência sem pcall; trate falhas/transientes.");
+  if(code.includes("OnServerEvent")&&!/typeof|type\(|assert|~=|==/.test(code))notes.push("RemoteEvent: valide argumentos no servidor antes de executar uma ação.");
+  if((code.match(/while true do/g)||[]).length)notes.push("Loop: 'while true do' sem pausa pode consumir recursos; considere task.wait() ou uma condição de saída.");
+  if(/repeat\\s*$/m.test(code)&&!/until/.test(code))notes.push("Loop repeat: verifique se existe um 'until'.");
+  if(/Players%.PlayerAdded/.test(code)&&!/PlayerRemoving/.test(code))notes.push("Ciclo de vida: considere tratar PlayerRemoving para limpar cache/conexões ou iniciar save.");
+  if(/--!strict/.test(code))notes.push("Type checking: ótimo começo; adicione tipos de parâmetros/retornos onde isso deixar o contrato do módulo mais claro.");
+  if(/GetChildren\(\)/.test(code)&&/for .* in .* do/.test(code))notes.push("Performance: em trechos quentes, evite repetir GetChildren/GetDescendants; cache referências quando fizer sentido.");
+  if(!notes.length)notes.push("Não encontrei um padrão óbvio de problema no analisador local. Isso não substitui testes no Roblox Studio.");
+  return "Análise local para seu pedido: "+prompt+"\\n\\n"+notes.map((n,i)=>(i+1)+". "+n).join("\\n");
+}
+async function sendAI(){
+  const input=qs("#aiInput").value.trim();if(!input)return;
+  addMessage("me",input);qs("#aiInput").value="";
+  const s=state.scripts.find(x=>x.id===state.activeId);const code=s?.code||"";
+  const endpoint=state.settings.aiEndpoint?.trim();
+  const key=qs("#aiKey").value.trim();
+  if(endpoint){
+    try{
+      const body=state.settings.aiFormat==="openai"?
+        {model:state.settings.aiModel||undefined,messages:[
+          {role:"system",content:"Você é um assistente especialista em Luau e Roblox Studio. Responda em português do Brasil, priorize código seguro no servidor e arquitetura modular."},
+          {role:"user",content:input+"\\n\\nCódigo atual:\\n"+code}
+        ]}: {prompt:input,code,model:state.settings.aiModel||undefined};
+      const headers={"Content-Type":"application/json"};if(key)headers.Authorization="Bearer "+key;
+      const res=await fetch(endpoint,{method:"POST",headers,body:JSON.stringify(body)});
+      if(!res.ok)throw new Error("HTTP "+res.status);
+      const data=await res.json();
+      const answer=data.choices?.[0]?.message?.content||data.output_text||data.answer||JSON.stringify(data);
+      addMessage("ai",answer);
+    }catch(err){
+      addMessage("ai","Não consegui chamar o endpoint externo ("+err.message+"). Vou continuar em modo local.\\n\\n"+localAnalyze(input,code));
+    }
+  }else{
+    addMessage("ai",localAnalyze(input,code));
+  }
+}
+function showModuleModal(name){
+  const m=MODULES.find(x=>x.name===name);if(!m)return;
+  openModal({name:m.name,type:"module",description:m.desc,tags:m.tags.join(", "),code:m.code});
+}
+function openModal(prefill={}){
+  qs("#modalTitle").textContent=prefill.name?"Adicionar ao Vault":"Novo script";
+  qs("#formName").value=prefill.name||"NovoScript";qs("#formType").value=prefill.type||"module";qs("#formDesc").value=prefill.description||"";qs("#formTags").value=(prefill.tags||[]).join(", ");qs("#formCode").value=prefill.code||"--!strict\\n\\n";
+  qs("#modal").classList.add("show");
+}
+function closeModal(){qs("#modal").classList.remove("show")}
+function createFromModal(){
+  const name=qs("#formName").value.trim()||"NovoScript";
+  const tags=qs("#formTags").value.split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+  newScript({name,type:qs("#formType").value,description:qs("#formDesc").value,tags,code:qs("#formCode").value});closeModal();
+}
+function exportVault(){
+  const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),scripts:state.scripts},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="rbxgarden-vault.json";a.click();URL.revokeObjectURL(a.href);toast("Vault exportado")}
+function importVaultFile(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      const imported=Array.isArray(data)?data:data.scripts;
+      if(!Array.isArray(imported))throw new Error("Formato inválido");
+      imported.forEach(s=>state.scripts.unshift({...s,id:uid(),updated:Date.now()}));saveState();renderVault();renderDashboard();toast(imported.length+" scripts importados");
+    }catch(e){toast("Importação inválida")}
+  };reader.readAsText(file);
+}
+function testAI(){
+  const endpoint=qs("#aiEndpoint").value.trim();
+  if(!endpoint){toast("Configure um endpoint primeiro");return}
+  toast("Endpoint configurado. Envie uma mensagem para testar.");
+}
+function setup(){
+  loadState();renderDashboard();renderMessages();renderDocs();renderSettings();
+  qsa(".nav button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+  qsa("[data-go]").forEach(b=>b.onclick=()=>showView(b.dataset.go));
+  qs("#newScriptBtn").onclick=()=>openModal();
+  qs("#newScriptBtnTop").onclick=()=>openModal();
+  qs("#closeModal").onclick=closeModal;qs("#cancelModal").onclick=closeModal;qs("#confirmModal").onclick=createFromModal;
+  qs("#exportBtn").onclick=exportVault;qs("#importBtn").onclick=()=>qs("#fileInput").click();qs("#fileInput").onchange=e=>e.target.files[0]&&importVaultFile(e.target.files[0]);
+  qs("#saveEditor").onclick=saveEditor;qs("#copyEditor").onclick=async()=>{await navigator.clipboard.writeText(qs("#codeEditor").value);toast("Código copiado")};
+  qs("#backVault").onclick=()=>showView("vault");qs("#addTag").onclick=addEditorTag;
+  qs("#codeEditor").addEventListener("input",()=>{updateLines();clearTimeout(window.__save);window.__save=setTimeout(saveEditor,650)});
+  qs("#codeEditor").addEventListener("scroll",()=>qs("#lineNumbers").scrollTop=qs("#codeEditor").scrollTop);
+  qs("#editorTitle").addEventListener("input",()=>{clearTimeout(window.__save);window.__save=setTimeout(saveEditor,650)});
+  qs("#editorDesc").addEventListener("input",()=>{clearTimeout(window.__save);window.__save=setTimeout(saveEditor,650)});
+  qs("#editorType").addEventListener("change",saveEditor);qs("#newTag").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addEditorTag()}});
+  qs("#moduleSearch").oninput=renderModules;qs("#moduleCategory").onchange=renderModules;
+  qs("#globalSearch").oninput=()=>{
+  if(qs("#vault").classList.contains("active"))renderVault();
+  const q=qs("#globalSearch").value.toLowerCase().trim();
+  if(q && qs("#modules").classList.contains("active"))renderModules();
+  if(q && qs("#snippets").classList.contains("active")){qs("#snippetSearch").value=q;renderSnippets()}
+};
+  qs("#sendEditorAI").onclick=()=>{showView("ai");const s=state.scripts.find(x=>x.id===state.activeId);qs("#aiInput").value="Revise o script "+(s?.name||"atual")+" e encontre bugs, riscos e melhorias de arquitetura.";};
+  qs("#aiFromCurrent").onclick=()=>{showView("editor");if(!state.activeId&&state.scripts[0])openEditor(state.scripts[0].id);};
+  qs("#aiSend").onclick=sendAI;qs("#aiInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendAI()}});
+  qsa(".prompt").forEach(p=>p.onclick=()=>{qs("#aiInput").value=p.textContent.replace(/^\S+\s/,"");qs("#aiInput").focus()});
+  qs("#saveSettings").onclick=()=>{
+    state.settings.workspaceName=qs("#workspaceName").value.trim()||"RBXGarden";
+    state.settings.aiEndpoint=qs("#aiEndpoint").value.trim();state.settings.aiModel=qs("#aiModel").value.trim();state.settings.aiFormat=qs("#aiFormat").value;
+    saveState();toast("Preferências salvas")
+  };
+  qs("#testAI").onclick=testAI;
+  qs("#resetData").onclick=()=>{if(confirm("Apagar todos os scripts e preferências locais?")){localStorage.removeItem(KEY);location.reload()}};
+  qsa("[data-open-module]").forEach(b=>b.onclick=()=>showModuleModal(b.dataset.openModule));
+  qsa("[data-vault-filter]").forEach(b=>b.onclick=()=>{state.vaultFilter=b.dataset.vaultFilter;renderVault()});
+  qs("#cmdBtn").onclick=openCmd;document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCmd()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="s"){e.preventDefault();saveEditor()}if(e.key==="Escape"){qs("#cmd").classList.remove("show");closeModal()}});
+  qs("#cmdInput").oninput=renderCmd;qs("#globalSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){showView("vault");renderVault()}});
+  qs("#cmd").addEventListener("click",e=>{if(e.target.id==="cmd")qs("#cmd").classList.remove("show")});
+  bindScriptCards(qs("#recentScripts"));
+}
+function openCmd(){qs("#cmd").classList.add("show");qs("#cmdInput").value="";renderCmd();setTimeout(()=>qs("#cmdInput").focus(),30)}
+function renderCmd(){
+  const q=(qs("#cmdInput").value||"").toLowerCase(),items=[
+    ["Abrir Dashboard","showView('dashboard')"],
+    ["Novo script","openModal()"],
+    ["Abrir Script Vault","showView('vault')"],
+    ["Abrir Modules","setViewV4('modules')"],
+    ["Abrir Projects","setViewV4('projects')"],
+    ["Abrir Snippet Lab","setViewV4('snippets')"],
+    ["Abrir Playground","setViewV4('playground')"],
+    ["Abrir Code AI","setViewV4('ai')"],
+    ["Abrir Luau Docs","setViewV4('docs')"],
+    ["Abrir Focus","setViewV4('focus')"],
+    ["Abrir Roadmap","setViewV4('roadmap')"],
+    ["Configurações","setViewV4('settings')"],
+    ["Exportar Vault","exportVault()"]
+  ].filter(x=>x[0].toLowerCase().includes(q));
+  qs("#cmdResults").innerHTML=items.map((x,i)=>`<div class="cmd-item" data-cmd="${i}"><b>${esc(x[0])}</b></div>`).join("");
+  qsa("[data-cmd]").forEach(el=>el.onclick=()=>{eval(items[Number(el.dataset.cmd)][1]);qs("#cmd").classList.remove("show")});
+}
+setup();
+
+/* ===== V4 DATA + PRODUCTIVITY SYSTEMS ===== */
+state.projects = state.projects || [
+  {id:uid(),name:"Meu próximo jogo",desc:"Workspace padrão para um novo projeto Roblox.",emoji:"🌊",color:"aqua",progress:15},
+  {id:uid(),name:"Sistema de combate",desc:"Skills, combos, cooldowns e efeitos.",emoji:"⚔️",color:"green",progress:42},
+  {id:uid(),name:"Incremental",desc:"Economia, rebirths, pets, upgrades e DataStore.",emoji:"💎",color:"lime",progress:68}
+];
+state.tasks = state.tasks || {
+  ideas:[{text:"Criar sistema de quests"}],
+  doing:[{text:"Refatorar PlayerData"}],
+  done:[{text:"Criar RemoteBridge"}]
+};
+state.snippets = state.snippets || [
+  {id:uid(),name:"PlayerAdded",tags:["player","events"],code:`local Players = game:GetService("Players")
+
+Players.PlayerAdded:Connect(function(player)
+    print("Entrou:", player.Name)
+end)`},
+  {id:uid(),name:"SafeRemote",tags:["remote","security"],code:`Remote.OnServerEvent:Connect(function(player, itemId)
+    if type(itemId) ~= "string" then
+        return
+    end
+
+    -- valide preço, permissões e estado no servidor
+end)`},
+  {id:uid(),name:"Debounce",tags:["cooldown","input"],code:`local busy = false
+
+if busy then
+    return
+end
+
+busy = true
+task.delay(1, function()
+    busy = false
+end)`},
+  {id:uid(),name:"Typed Dictionary",tags:["strict","types"],code:`type PlayerData = {
+    Coins: number,
+    Level: number,
+    Inventory: {string},
+}
+
+local data: PlayerData = {
+    Coins = 0,
+    Level = 1,
+    Inventory = {},
+}`}
+];
+state.roadmap = state.roadmap || [
+  ["1","Fundamentos","Variáveis, tipos básicos, operadores e print.",true],
+  ["2","Controle","if, loops, funções e escopo.",true],
+  ["3","Tables","Listas, dicionários e estruturas de dados.",state.scripts.length>=3],
+  ["4","Roblox API","Services, Instances, Properties e Events.",state.scripts.length>=4],
+  ["5","Cliente/Servidor","RemoteEvent, validação e arquitetura.",state.scripts.some(s=>(s.tags||[]).includes("remote"))],
+  ["6","ModuleScripts","require, serviços, configuração e dependências.",state.scripts.some(s=>s.type==="module")],
+  ["7","Persistência","DataStore, cache, schema e retries.",MODULES.some(m=>m.category==="Data")],
+  ["8","Sistemas grandes","tipagem, testes, cleanup, performance e arquitetura.",state.scripts.length>=8]
+];
+state.focus = state.focus || {remaining:1500,running:false,last:0,mode:"25/5"};
+saveState();
+
+function updateAchievementStrip(){
+  const ach = [
+    ["📚",state.scripts.length,"Scripts"],
+    ["🏷️",countTags(),"Tags únicas"],
+    ["🧩",MODULES.length,"Módulos"],
+    ["📖",DOCS.length,"Capítulos"],
+    ["⭐",state.scripts.filter(s=>s.favorite).length,"Favoritos"]
+  ];
+  qs("#achievementStrip").innerHTML = ach.map(x=>`<div class="stat-tile"><b>${x[0]} ${x[1]}</b><small>${x[2]}</small></div>`).join("");
+}
+function renderProjects(){
+  qs("#projectGrid").innerHTML = state.projects.map(p=>`<article class="card workspace-card fade-in">
+    <div class="card-row"><div class="project-orb">${p.emoji}</div><span class="badge">${p.progress}%</span></div>
+    <div class="card-title">${esc(p.name)}</div><div class="card-desc">${esc(p.desc)}</div>
+    <div class="progress-line" style="margin-top:10px"><i style="width:${Math.max(0,Math.min(100,p.progress))}%"></i></div>
+    <div class="card-foot"><span class="muted">workspace</span><div class="toolbar"><button class="btn ghost project-inc" data-id="${p.id}">+10%</button><button class="btn danger project-del" data-id="${p.id}">×</button></div></div>
+  </article>`).join("");
+  qs("#projectGrid").querySelectorAll(".project-inc").forEach(b=>b.onclick=()=>{const p=state.projects.find(x=>x.id===b.dataset.id);p.progress=Math.min(100,p.progress+10);saveState();renderProjects();updateAchievementStrip()});
+  qs("#projectGrid").querySelectorAll(".project-del").forEach(b=>b.onclick=()=>{state.projects=state.projects.filter(x=>x.id!==b.dataset.id);saveState();renderProjects();updateAchievementStrip()});
+}
+function renderTasks(){
+  const map={ideas:"#taskIdeas",doing:"#taskDoing",done:"#taskDone"};
+  Object.keys(map).forEach(k=>qs(map[k]).innerHTML=(state.tasks[k]||[]).map((t,i)=>`<div class="task">${esc(t.text)} <button style="float:right;background:transparent;color:#76909a;font-weight:900" data-task-del="${k}:${i}">×</button></div>`).join(""));
+  qsa("[data-task-del]").forEach(b=>b.onclick=()=>{const [k,i]=b.dataset.taskDel.split(":");state.tasks[k].splice(Number(i),1);saveState();renderTasks()});
+}
+function renderSnippets(){
+  const q=(qs("#snippetSearch").value||"").toLowerCase().trim();
+  const arr=state.snippets.filter(s=>(s.name+" "+s.tags.join(" ")+s.code).toLowerCase().includes(q));
+  qs("#snippetGrid").innerHTML=arr.map(s=>`<article class="card snippet-card">
+    <div class="card-row"><div class="card-title" style="margin:0">${esc(s.name)}</div><button class="btn ghost snippet-copy" data-id="${s.id}">Copiar</button></div>
+    <div class="badges" style="margin:8px 0">${s.tags.map(t=>`<span class="badge">${esc(t)}</span>`).join("")}</div>
+    <div class="snippet-code"><pre>${esc(s.code)}</pre></div>
+    <div class="card-foot"><button class="btn green snippet-use" data-id="${s.id}">Abrir no editor</button><span class="muted">snippet</span></div>
+  </article>`).join("") || `<div class="card empty">Nenhum snippet encontrado.</div>`;
+  qs("#snippetGrid").querySelectorAll(".snippet-copy").forEach(b=>b.onclick=async()=>{const s=state.snippets.find(x=>x.id===b.dataset.id);await navigator.clipboard.writeText(s.code);toast("Snippet copiado")});
+  qs("#snippetGrid").querySelectorAll(".snippet-use").forEach(b=>b.onclick=()=>{const s=state.snippets.find(x=>x.id===b.dataset.id);newScript({name:s.name,type:"snippet",description:"Criado a partir do Snippet Lab.",tags:s.tags,code:s.code})});
+}
+function renderRoadmap(){
+  qs("#roadmapList").innerHTML=state.roadmap.map(r=>`<div class="card road-step ${r[3]?"done":"locked"}">
+    <div class="road-dot">${r[3]?"✓":r[0]}</div><div><div class="card-title" style="margin:0">${esc(r[1])}</div><div class="card-desc">${esc(r[2])}</div></div><span class="badge">${r[3]?"Concluído":"Próximo"}</span>
+  </div>`).join("");
+}
+function renderPlayConsole(lines){qs("#playConsole").innerHTML=lines.map(x=>`<div class="line ${x.type||""}">${esc(x.text)}</div>`).join("")}
+function simulateLuau(){
+  const code=qs("#playCode").value;const lines=[];
+  lines.push({text:"$ RBXGarden simulate --luau"});
+  if(/while true do/.test(code)&&!/(task\.wait|wait\s*\()/i.test(code))lines.push({text:"possible infinite loop without yield",type:"warn"});
+  if(/GetAsync|SetAsync|UpdateAsync/.test(code)&&!/pcall/.test(code))lines.push({text:"warning: DataStore call without pcall",type:"warn"});
+  if(/OnServerEvent/.test(code)&&!/type\(|typeof\(|~=/ .test(code))lines.push({text:"warning: validate RemoteEvent arguments",type:"warn"});
+  const printRegex=/\\b(print|warn)\\s*\\(([^\\n]*)\\)/g;let match,count=0;
+  while((match=printRegex.exec(code))&&count<15){
+    let arg=match[2].replace(/[`']/g,"").replace(/\{[^}]+\}/g,"<valor>");
+    lines.push({text:(match[1]==="warn"?"WARN: ":"")+arg,type:match[1]==="warn"?"warn":""});count++;
+  }
+  if(!count)lines.push({text:"(nenhum print/warn detectado para simulação)"});
+  if(/--!strict/.test(code))lines.push({text:"type mode: strict",type:""});
+  lines.push({text:"simulation finished — nenhum código Luau real foi executado."});
+  renderPlayConsole(lines);
+}
+function analyzePlayground(){
+  const fake={id:"play",name:"Playground",code:qs("#playCode").value,tags:[]};
+  const result=localAnalyze("análise geral do playground",fake.code);
+  renderPlayConsole(result.split("\\n").map(t=>({text:t})));
+}
+function formatPlayground(){
+  let code=qs("#playCode").value.replace(/[ \\t]+$/gm,"");
+  code=code.replace(/\bthen\s+/g,"then\n    ");
+  qs("#playCode").value=code;toast("Formatação leve aplicada")}
+function setViewV4(id){
+  showView(id);
+  if(id==="projects"){renderProjects();renderTasks()}
+  if(id==="snippets")renderSnippets();
+  if(id==="roadmap")renderRoadmap();
+  if(id==="dashboard"){renderDashboard();updateAchievementStrip()}
+}
+function hydrateV4(){
+  updateAchievementStrip();renderProjects();renderTasks();renderSnippets();renderRoadmap();renderPlayConsole([{text:"RBXGarden virtual console ready."},{text:"Este playground simula padrões básicos; não executa Luau real."}]);
+  qsa(".nav button").forEach(b=>{
+    const old=b.onclick;
+    b.onclick=()=>setViewV4(b.dataset.view);
+  });
+  qsa("[data-go]").forEach(b=>b.onclick=()=>setViewV4(b.dataset.go));
+  qs("#newProjectBtn").onclick=()=>{
+    const name=prompt("Nome do projeto:","Novo projeto Roblox"); if(!name)return;
+    state.projects.push({id:uid(),name,desc:"Novo workspace criado pelo RBXGarden.",emoji:"🌱",color:"aqua",progress:0});saveState();renderProjects();updateAchievementStrip();toast("Projeto criado");
+  };
+  qsa("[data-task-column]").forEach(b=>b.onclick=()=>{
+    const text=prompt("Nome da tarefa:");if(!text)return;
+    state.tasks[b.dataset.taskColumn].push({text});saveState();renderTasks();
+  });
+  qs("#snippetSearch").oninput=renderSnippets;
+  qs("#saveSnippetBtn").onclick=()=>{
+    const s=state.scripts.find(x=>x.id===state.activeId);
+    if(!s){toast("Abra um script primeiro");return}
+    state.snippets.unshift({id:uid(),name:s.name,tags:s.tags||[],code:s.code||""});saveState();renderSnippets();toast("Snippet salvo");
+  };
+  qs("#playRun").onclick=simulateLuau;qs("#playAnalyze").onclick=analyzePlayground;qs("#playFormat").onclick=formatPlayground;
+  qs("#clearConsole").onclick=()=>renderPlayConsole([]);
+  qs("#motionToggle").onclick=()=>{
+    document.documentElement.classList.toggle("motion-off");
+    qs("#motionToggle").classList.toggle("active");
+    localStorage.setItem("rbxgarden_motion",document.documentElement.classList.contains("motion-off")?"off":"on");
+  };
+  qs("#densityToggle").onclick=()=>{document.body.classList.toggle("compact");qs("#densityToggle").classList.toggle("active");toast("Modo de densidade alternado")};
+}
+document.addEventListener("DOMContentLoaded",hydrateV4);
+
+/* Focus timer */
+let focusTimer=null;
+function fmtFocus(sec){sec=Math.max(0,Math.floor(sec));return String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0")}
+function renderFocus(){
+  qs("#focusTime").textContent=fmtFocus(state.focus.remaining);
+  qs("#focusState").textContent=state.focus.running?"Em foco":"Pausado";
+  const pct=100-(state.focus.remaining/1500*100);
+  qs("#focusRing").style.setProperty("--p",Math.max(0,Math.min(100,pct))+"%");
+}
+function startFocus(){
+  if(state.focus.running)return;state.focus.running=true;renderFocus();
+  focusTimer=setInterval(()=>{
+    if(state.focus.remaining<=0){stopFocus();toast("Sessão concluída! 🌿");return}
+    state.focus.remaining--;renderFocus()
+  },1000);
+}
+function stopFocus(){state.focus.running=false;clearInterval(focusTimer);focusTimer=null;saveState();renderFocus()}
+function resetFocus(){stopFocus();state.focus.remaining=1500;renderFocus()}
+setTimeout(()=>{
+  if(!qs("#focusStart"))return;
+  renderFocus();
+  qs("#focusStart").onclick=startFocus;qs("#focusPause").onclick=stopFocus;qs("#focusReset").onclick=resetFocus;
+},100);
+
+(function restoreMotion(){if(localStorage.getItem("rbxgarden_motion")==="off"){document.documentElement.classList.add("motion-off");setTimeout(()=>qs("#motionToggle")?.classList.remove("active"),150)}})();
+
+/* subtle 3D tilt, disabled on touch */
+if(matchMedia("(pointer:fine)").matches){
+  document.addEventListener("pointermove",e=>{
+    const card=e.target.closest(".hero-main");
+    if(!card)return;
+    const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`rotateX(${-y*2.4}deg) rotateY(${x*2.8}deg)`;
+  });
+  document.addEventListener("pointerleave",e=>{if(e.target.classList?.contains("hero-main"))e.target.style.transform=""},true);
+}
+
+</script>
+</body>
+</html>
