@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RBXGarden — Roblox Luau Dev SuperHub</title>
+<meta name="theme-color" content="#19bfd0">
+<meta name="robots" content="index,follow">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Hub Frutiger para guardar scripts, estudar Luau, pesquisar módulos e usar um copiloto de código Roblox.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preload" href="js/data.js" as="script">
+</head>
+<body>
+
+<div class="scene-decor" aria-hidden="true">
+  <span class="cloud-float" style="--w:130px;--x:5%;--y:8%;--d:18s;--delay:-4s"></span>
+  <span class="cloud-float" style="--w:90px;--x:72%;--y:12%;--d:24s;--delay:-7s"></span>
+  <span class="leaf-float" style="--x:8%;--y:42%;--fs:24px;--d:9s;--delay:-2s">🍃</span>
+  <span class="leaf-float" style="--x:89%;--y:61%;--fs:19px;--d:11s;--delay:-5s">🌿</span>
+  <span class="leaf-float" style="--x:78%;--y:84%;--fs:23px;--d:13s;--delay:-9s">🍃</span>
+  <span class="bubble-float" style="--s:18px;--x:19%;--d:11s;--delay:-3s"></span>
+  <span class="bubble-float" style="--s:10px;--x:62%;--d:8s;--delay:-5s"></span>
+  <span class="bubble-float" style="--s:28px;--x:81%;--d:14s;--delay:-10s"></span>
+  <span class="bubble-float" style="--s:14px;--x:40%;--d:10s;--delay:-8s"></span>
+  <span class="bubble-float" style="--s:8px;--x:54%;--d:16s;--delay:-6s"></span>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">🌱</div>
+    <div class="brand-text"><strong>RBXGarden V4</strong><span>Roblox Luau Dev SuperHub</span></div>
+  </div>
+  <div class="nav-title">Workspace</div>
+  <nav class="nav">
+    <button data-view="dashboard" class="active"><i class="nav-icon">🏡</i><span>Dashboard</span></button>
+    <button data-view="vault"><i class="nav-icon">📚</i><span>Script Vault</span></button>
+    <button data-view="modules"><i class="nav-icon">🧩</i><span>Modules</span></button>
+    <button data-view="projects"><i class="nav-icon">🗂️</i><span>Projects</span></button>
+    <button data-view="snippets"><i class="nav-icon">⚡</i><span>Snippet Lab</span></button>
+    <button data-view="playground"><i class="nav-icon">▶️</i><span>Playground</span></button>
+    <button data-view="ai"><i class="nav-icon">✨</i><span>Code AI</span></button>
+    <button data-view="docs"><i class="nav-icon">📖</i><span>Luau Docs</span></button>
+    <button data-view="focus"><i class="nav-icon">🫧</i><span>Focus</span></button>
+    <button data-view="roadmap"><i class="nav-icon">🗺️</i><span>Roadmap</span></button>
+    <button data-view="settings"><i class="nav-icon">⚙️</i><span>Settings</span></button>
+  </nav>
+  <div class="side-bottom">
+    <div class="status"><span class="dot"></span><span class="status-text">Dados locais ativos · salvamento automático</span></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input id="globalSearch" class="search" placeholder="Pesquisar scripts, módulos, docs e tags...">
+      <span class="shortcut">Ctrl K</span>
+    </div>
+    <div class="top-actions">
+      <button id="cmdBtn" class="icon-btn" title="Command palette">⌘</button>
+      <button id="newScriptBtnTop" class="btn primary">＋ Script</button>
+    </div>
+  </div>
+
+  <section id="dashboard" class="view active">
+    <div class="hero">
+      <div class="card hero-main">
+        <div class="eyebrow">Roblox • Luau • criação</div>
+        <h1>Seu jardim de<br>código Roblox.</h1>
+        <p>Um workspace Frutiger para guardar scripts, encontrar módulos reutilizáveis, estudar Luau e usar um copiloto de código sem perder sua organização.</p>
+        <div class="hero-actions">
+          <button class="btn primary" data-go="vault">Abrir Script Vault</button>
+          <button class="btn green" data-go="modules">Explorar módulos</button>
+          <button class="btn ghost" data-go="docs">Estudar Luau</button>
+        </div>
+      </div>
+      <div class="card hero-side">
+        <div class="orb"><div class="orb-core">💧</div></div>
+        <div class="mini-stats">
+          <div class="mini-stat"><b id="dashScripts">0</b><span>scripts</span></div>
+          <div class="mini-stat"><b id="dashTags">0</b><span>tags</span></div>
+          <div class="mini-stat"><b id="dashModules">10</b><span>módulos</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid cols3">
+      <div class="card kpi"><span class="bubble"></span><div class="label">Scripts salvos</div><strong id="kpiScripts">0</strong><small>persistidos no navegador</small></div>
+      <div class="card kpi"><span class="bubble"></span><div class="label">Módulos prontos</div><strong>10</strong><small>DataStore, remotes, inventário e mais</small></div>
+      <div class="card kpi"><span class="bubble"></span><div class="label">Capítulos Luau</div><strong>15+</strong><small>com exemplos focados em Roblox</small></div>
+    </div>
+
+    <div class="section-head"><div><h2>Continue trabalhando</h2><p>Seus scripts mais recentes aparecem aqui.</p></div><button class="btn ghost" data-go="vault">Ver tudo</button></div>
+    <div id="recentScripts" class="grid cols3"></div>
+
+    <div class="section-head"><div><h2>Atalhos de desenvolvimento</h2><p>Blocos que você pode abrir com um clique.</p></div></div>
+    <div class="section-head"><div><h2>Seu progresso</h2><p>Pequenas metas que deixam seu hub vivo.</p></div></div>
+    <div id="achievementStrip" class="stat-strip"></div>
+
+    <div class="section-head"><div><h2>Atalhos inteligentes</h2><p>Abra ferramentas sem sair do fluxo.</p></div><span class="kbd">Ctrl K</span></div>
+    <div class="grid cols3">
+      <button class="card script-card" data-go="projects"><div class="card-row"><div class="module-icon">🗂️</div><span class="badge green">WORKSPACE</span></div><div class="card-title">Projetos & tarefas</div><div class="card-desc">Organize sistemas por projeto e mantenha uma mini board de desenvolvimento.</div></button>
+      <button class="card script-card" data-go="snippets"><div class="card-row"><div class="module-icon">⚡</div><span class="badge blue">SNIPPETS</span></div><div class="card-title">Snippet Lab</div><div class="card-desc">Peças pequenas de Luau para copiar, adaptar e transformar em módulos.</div></button>
+      <button class="card script-card" data-go="playground"><div class="card-row"><div class="module-icon">▶️</div><span class="badge">LAB</span></div><div class="card-title">Playground</div><div class="card-desc">Teste ideias de sintaxe e veja uma simulação textual de print, warnings e erros.</div></button>
+    </div>
+
+    <div class="grid cols3">
+      <button class="card script-card" data-open-module="DataStoreService Wrapper"><div class="card-row"><div class="module-icon">💾</div><span class="badge green">SAVE</span></div><div class="card-title">DataStore seguro</div><div class="card-desc">Template modular para carregar, salvar, atualizar e proteger dados do jogador.</div></button>
+      <button class="card script-card" data-go="ai"><div class="card-row"><div class="module-icon">✨</div><span class="badge blue">AI</span></div><div class="card-title">Revisar meu código</div><div class="card-desc">Cole um script e peça diagnóstico, melhorias, organização ou explicação.</div></button>
+      <button class="card script-card" data-go="docs"><div class="card-row"><div class="module-icon">📖</div><span class="badge">LUAU</span></div><div class="card-title">Aprender Type System</div><div class="card-desc">Tipos, generics, export type, annotations, strict e exemplos aplicados ao Roblox.</div></button>
+    </div>
+  </section>
+
+  <section id="vault" class="view">
+    <div class="section-head"><div><h2>📚 Script Vault</h2><p>Seu banco pessoal de scripts, snippets e sistemas.</p></div><div class="toolbar"><button id="importBtn" class="btn ghost">Importar</button><button id="exportBtn" class="btn ghost">Exportar</button><button id="newScriptBtn" class="btn primary">＋ Novo script</button></div></div>
+    <div class="filters">
+      <button class="filter active" data-vault-filter="all">Todos</button>
+      <button class="filter" data-vault-filter="favorite">★ Favoritos</button>
+      <button class="filter" data-vault-filter="snippet">Snippets</button>
+      <button class="filter" data-vault-filter="system">Sistemas</button>
+    </div>
+    <div id="vaultGrid" class="grid cols3"></div>
+  </section>
+
+  <section id="editor" class="view">
+    <div class="section-head"><div><h2>🛠 Editor</h2><p>Edite seu Luau e salve automaticamente neste navegador.</p></div><div class="toolbar"><button id="backVault" class="btn ghost">← Vault</button><button id="saveEditor" class="btn green">Salvar</button></div></div>
+    <div class="editor-shell">
+      <div class="card editor-card">
+        <div class="editor-top">
+          <div class="editor-meta"><span class="file-dot"></span><input id="editorTitle" class="title-input" value="NovoScript"></div>
+          <div class="toolbar"><button id="copyEditor" class="btn ghost">Copiar</button><button id="sendEditorAI" class="btn primary">Revisar com IA</button></div>
+        </div>
+        <div class="code-wrap"><div id="lineNumbers" class="lines">1</div><textarea id="codeEditor" class="code" spellcheck="false"></textarea></div>
+      </div>
+      <aside class="card editor-side">
+        <div class="side-block"><div class="panel-title">Metadados</div><label>Descrição</label><textarea id="editorDesc" class="editor-input" style="width:100%;min-height:90px;resize:vertical"></textarea></div>
+        <div class="side-block"><label>Tags</label><div id="editorTags" class="tag-editor"></div><div style="display:flex;gap:6px;margin-top:7px"><input id="newTag" class="tag-input" placeholder="ex.: combat"><button id="addTag" class="btn ghost">＋</button></div></div>
+        <div class="side-block"><label>Tipo</label><select id="editorType" class="select" style="width:100%"><option value="system">Sistema</option><option value="snippet">Snippet</option><option value="script">Script</option><option value="module">ModuleScript</option></select></div>
+        <div class="side-block"><label>Ajuda</label><div class="editor-note">Use Ctrl+S para salvar. O conteúdo fica no localStorage do navegador. Para mover seu vault para outra máquina, use Exportar.</div></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="modules" class="view">
+    <div class="section-head"><div><h2>🧩 Module Garden</h2><p>Pesquisa local de módulos prontos e editáveis para acelerar seus projetos Roblox.</p></div></div>
+    <div class="card" style="padding:13px;margin-bottom:14px">
+      <div class="module-toolbar"><input id="moduleSearch" class="search" style="padding:11px 13px" placeholder="Pesquisar por nome, descrição ou tag..."><select id="moduleCategory" class="select"><option value="all">Todas as categorias</option><option value="Data">Data</option><option value="Network">Network</option><option value="Player">Player</option><option value="Utility">Utility</option><option value="UI">UI</option><option value="Gameplay">Gameplay</option></select></div>
+    </div>
+    <div id="moduleGrid" class="grid cols3"></div>
+  </section>
+
+  <section id="ai" class="view">
+    <div class="section-head"><div><h2>✨ Code AI</h2><p>Copiloto local para revisão + ponte opcional para uma IA externa.</p></div><button id="aiFromCurrent" class="btn ghost">Usar script atual</button></div>
+    <div class="ai-layout">
+      <div class="card ai-chat">
+        <div id="messages" class="messages"></div>
+        <div class="ai-compose"><textarea id="aiInput" class="ai-input" placeholder="Ex.: encontre possíveis bugs neste sistema de DataStore e explique como melhorar..."></textarea><button id="aiSend" class="btn primary">Enviar</button></div>
+      </div>
+      <aside class="card ai-sidebar">
+        <div class="panel-title">Prompts rápidos</div>
+        <div class="prompt-list">
+          <button class="prompt">🔎 Revisar meu código e achar bugs</button>
+          <button class="prompt">🧹 Organizar este script em módulos</button>
+          <button class="prompt">⚡ Otimizar loops e conexões</button>
+          <button class="prompt">🧠 Explicar este código linha por linha</button>
+          <button class="prompt">🛡️ Verificar segurança client/server</button>
+          <button class="prompt">🧩 Transformar em ModuleScript</button>
+        </div>
+        <div class="callout" style="margin-top:14px"><b>Modo local:</b> funciona sem chave de API e analisa padrões comuns de Luau/Roblox. <br><br><b>IA externa:</b> configure um endpoint compatível na página Settings; a chave é mantida apenas nesta sessão.</div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="docs" class="view">
+    <div class="section-head"><div><h2>📖 Luau Docs Garden</h2><p>Guia próprio, pesquisável e focado em Roblox, baseado nas áreas atuais da documentação oficial.</p></div><a href="https://create.roblox.com/docs/luau" target="_blank" class="btn ghost">Abrir oficial ↗</a></div>
+    <div class="doc-layout">
+      <nav id="docNav" class="card doc-nav"></nav>
+      <article id="docContent" class="card doc-content"></article>
+    </div>
+  </section>
+
+
+  <section id="projects" class="view">
+    <div class="section-head">
+      <div><h2>🗂️ Projects</h2><p>Organize seu universo Roblox por jogo, sistema ou experiência.</p></div>
+      <button id="newProjectBtn" class="btn primary">＋ Novo projeto</button>
+    </div>
+    <div id="projectGrid" class="workspace-grid stagger"></div>
+    <div class="section-head"><div><h2>Mini board</h2><p>Uma visão rápida do que está sendo construído.</p></div></div>
+    <div class="kanban">
+      <div class="card kanban-col"><h4>🌱 Ideias</h4><div id="taskIdeas"></div><button class="btn ghost" data-task-column="ideas">＋ tarefa</button></div>
+      <div class="card kanban-col"><h4>💧 Em desenvolvimento</h4><div id="taskDoing"></div><button class="btn ghost" data-task-column="doing">＋ tarefa</button></div>
+      <div class="card kanban-col"><h4>🌿 Pronto</h4><div id="taskDone"></div><button class="btn ghost" data-task-column="done">＋ tarefa</button></div>
+    </div>
+  </section>
+
+  <section id="snippets" class="view">
+    <div class="section-head"><div><h2>⚡ Snippet Lab</h2><p>Pequenas peças de código prontas para adaptar ao seu projeto.</p></div><button id="saveSnippetBtn" class="btn green">＋ Salvar snippet do editor</button></div>
+    <div class="card" style="padding:13px;margin-bottom:14px">
+      <input id="snippetSearch" class="search" style="padding:11px 13px" placeholder="Buscar snippets por título, tag ou código...">
+    </div>
+    <div id="snippetGrid" class="grid cols3 stagger"></div>
+  </section>
+
+  <section id="playground" class="view">
+    <div class="section-head"><div><h2>▶️ Luau Playground</h2><p>Rascunhe código, formate e faça uma análise rápida sem precisar abrir o Studio.</p></div>
+      <div class="toolbar"><button id="playFormat" class="btn ghost">Formatar</button><button id="playAnalyze" class="btn ghost">Analisar</button><button id="playRun" class="btn primary">▶ Simular</button></div>
+    </div>
+    <div class="playground">
+      <div class="card play-area">
+        <textarea id="playCode" class="play-editor" spellcheck="false">--!strict
+local coins: number = 100
+
+local function buy(price: number)
+    if coins >= price then
+        coins -= price
+        print(`Compra aprovada! Restam {coins} coins.`)
+    else
+        warn("Coins insuficientes.")
+    end
+end
+
+buy(35)</textarea>
+      </div>
+      <div class="card console-area">
+        <div class="card-row" style="margin-bottom:9px"><div class="panel-title">Console virtual</div><button id="clearConsole" class="btn ghost">Limpar</button></div>
+        <div id="playConsole" class="console"><div class="line">RBXGarden virtual console ready.</div><div class="line">Este playground simula padrões básicos; não executa Luau real.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="focus" class="view">
+    <div class="section-head"><div><h2>🫧 Focus Mode</h2><p>Modo sem distrações para construir sistemas maiores.</p></div></div>
+    <div class="card focus-card">
+      <div class="focus-label">sessão atual</div>
+      <div id="focusRing" class="focus-ring"><div><div id="focusTime" class="focus-time">25:00</div><div id="focusState" class="focus-label" style="text-align:center">Pronto</div></div></div>
+      <div class="focus-controls"><button id="focusStart" class="btn primary">Iniciar</button><button id="focusPause" class="btn ghost">Pausar</button><button id="focusReset" class="btn ghost">Resetar</button></div>
+      <div class="callout" style="max-width:540px;text-align:center"><b>Dica:</b> escolha uma única tarefa, coloque o celular longe e deixe o Script Vault aberto apenas no projeto necessário.</div>
+    </div>
+  </section>
+
+  <section id="roadmap" class="view">
+    <div class="section-head"><div><h2>🗺️ Luau Roadmap</h2><p>Uma trilha visual para sair do básico e chegar a sistemas modulares.</p></div></div>
+    <div id="roadmapList" class="roadmap"></div>
+  </section>
+
+  <section id="settings" class="view">
+    <div class="section-head"><div><h2>⚙️ Settings</h2><p>Personalize o hub e configure a ponte de IA.</p></div></div>
+    <div class="grid cols2">
+      <div class="card" style="padding:20px">
+        <div class="panel-title">Aparência</div>
+        <div class="pill-row" style="margin:10px 0">
+          <button id="motionToggle" class="chip-btn active">✨ Animações</button>
+          <button id="densityToggle" class="chip-btn">🌿 Densidade compacta</button>
+        </div>
+        <div class="callout">O tema Frutiger já vem ativado: vidro, água, luz, natureza e superfícies suaves. As configurações são salvas neste navegador.</div>
+        <label style="display:block;font-size:10px;font-weight:900;color:#6d8590;text-transform:uppercase;letter-spacing:.12em;margin:12px 0 6px">Nome do workspace</label>
+        <input id="workspaceName" class="editor-input" style="width:100%" value="RBXGarden">
+        <button id="saveSettings" class="btn green" style="margin-top:10px">Salvar preferências</button>
+        <button id="resetData" class="btn danger" style="margin-top:10px;margin-left:6px">Resetar dados locais</button>
+      </div>
+      <div class="card" style="padding:20px">
+        <div class="panel-title">Ponte de IA externa</div>
+        <p class="muted">Use um pequeno backend seu ou um endpoint compatível com sua plataforma de IA. Não coloque uma chave permanente em um site público.</p>
+        <div class="form-grid">
+          <div class="full"><label>Endpoint</label><input id="aiEndpoint" placeholder="https://seu-backend.exemplo/chat"></div>
+          <div><label>Modelo</label><input id="aiModel" placeholder="seu-modelo"></div>
+          <div><label>Formato</label><select id="aiFormat"><option value="openai">OpenAI-compatible</option><option value="generic">JSON genérico</option></select></div>
+          <div class="full"><label>Chave temporária (não salva)</label><input id="aiKey" type="password" placeholder="cole apenas quando for usar"></div>
+        </div>
+        <button id="testAI" class="btn primary" style="margin-top:12px">Testar conexão</button>
+      </div>
+    </div>
+    <div class="section-head"><div><h2>Fontes oficiais</h2><p>Consulte a referência mais completa e atualizada fora do hub.</p></div></div>
+    <div class="grid cols3">
+      <a class="card script-card" href="https://create.roblox.com/docs/luau" target="_blank"><div class="card-title">Luau</div><div class="card-desc">Visão geral da linguagem e recursos.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/luau/type-checking" target="_blank"><div class="card-title">Type checking</div><div class="card-desc">Annotations, strict, generics e tipos.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/cloud-services/data-stores" target="_blank"><div class="card-title">Data stores</div><div class="card-desc">Persistência, acesso em Studio e boas práticas.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/reference/engine/classes/RemoteEvent" target="_blank"><div class="card-title">RemoteEvent</div><div class="card-desc">Comunicação assíncrona entre cliente e servidor.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/studio/script-editor" target="_blank"><div class="card-title">Script Editor</div><div class="card-desc">Autocompletar, análise, formatação e navegação.</div></a>
+      <a class="card script-card" href="https://create.roblox.com/docs/scripting/services" target="_blank"><div class="card-title">Services</div><div class="card-desc">Panorama dos serviços comuns do Roblox.</div></a>
+    </div>
+  </section>
+
+  <footer>RBXGarden • feito para organizar projetos Roblox • os dados do Vault ficam neste navegador</footer>
+</main>
+</div>
+
+<div id="modal" class="modal-backdrop"><div class="modal card">
+  <div class="section-head" style="margin-top:0"><div><h2 id="modalTitle">Novo script</h2><p id="modalSub">Crie um item para seu vault.</p></div><button id="closeModal" class="icon-btn">×</button></div>
+  <div class="form-grid">
+    <div><label>Nome</label><input id="formName" value="NovoScript"></div>
+    <div><label>Tipo</label><select id="formType"><option value="system">Sistema</option><option value="snippet">Snippet</option><option value="script">Script</option><option value="module">ModuleScript</option></select></div>
+    <div class="full"><label>Descrição</label><input id="formDesc" placeholder="Para que este script serve?"></div>
+    <div class="full"><label>Tags (separe por vírgulas)</label><input id="formTags" placeholder="datastore, player, save"></div>
+    <div class="full"><label>Código</label><textarea id="formCode"></textarea></div>
+  </div>
+  <div class="modal-actions"><button id="cancelModal" class="btn ghost">Cancelar</button><button id="confirmModal" class="btn primary">Criar</button></div>
+</div></div>
+
+<div id="cmd" class="cmd"><div class="cmd-box card"><input id="cmdInput" class="cmd-input" placeholder="Digite um comando..."><div id="cmdResults" class="cmd-results"></div></div></div>
+<div id="toast" class="toast"></div>
+<input id="fileInput" type="file" accept=".json,.txt,.lua,.luau" style="display:none">
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
